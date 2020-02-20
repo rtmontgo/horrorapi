@@ -5,6 +5,14 @@ uuid = require('uuid');
 
 const app = express();
 
+const mongoose = require('mongoose');
+const Models = require('./models.js');
+
+const Movies = Models.Movie;
+const Users = Models.User;
+
+mongoose.connect('mongodb://localhost:27017/horrorDB', { useNewUrlParser: true });
+
 app.use(morgan('common'));
 app.use(bodyParser.json());
 app.use(express.static('public'));
@@ -72,6 +80,18 @@ app.get('/users', passport.authenticate('jwt', { session: false }), function (re
   Users.find()
     .then(function (users) {
       res.status(201).json(users)
+    })
+    .catch(function (err) {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
+});
+
+// Get a user by username
+app.get('/users/:Username', function (req, res) {
+  Users.findOne({ Username: req.params.Username })
+    .then(function (user) {
+      res.json(user)
     })
     .catch(function (err) {
       console.error(err);
