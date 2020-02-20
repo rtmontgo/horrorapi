@@ -1,0 +1,5 @@
+{"_id":{"$oid":"5e4ee4ced9446682e1460ca5"},"Username":"samwinchester","Password":"supernat","Email":"samsplace@aol.com","Birthday":{"$date":"1980-09-09T00:00:00Z"},"Favorites":[{"$oid":"5e4ee3ddd9446682e1460ca4"}]}
+{"_id":{"$oid":"5e4ee51cd9446682e1460ca6"},"Username":"jojo2","Password":"1234","Email":"jojo2@gmail.com","Birthday":{"$date":"1999-03-18T00:00:00Z"},"Favorites":[{"$oid":"5d9130660925ab4498c5f45d"}]}
+{"_id":{"$oid":"5e4ee619d9446682e1460ca7"},"Username":"monstermash","Password":"xyz321","Email":"mymonsters@hotmail.com","Birthday":{"$date":{"$numberLong":"-204076800000"}},"Favorites":[{"$oid":"5e4ee36cd9446682e1460ca1"}]}
+{"_id":{"$oid":"5e4ee64dd9446682e1460ca8"},"Username":"frankfurter","Password":"thelab","Email":"transylvania@gmail.com","Birthday":{"$date":{"$numberLong":"-320976000000"}},"Favorites":[{"$oid":"5d912f3e0925ab4498c5f45b"},{"$oid":"5e4ee36cd9446682e1460ca2"}]}
+{"_id":{"$oid":"5e4ee6f9d9446682e1460ca9"},"Username":"james","Password":"1111","Email":"james@gmail.com","Birthday":{"$date":{"$numberLong":"-320976000000"}},"Favorites":[{"$oid":"5e4ee36cd9446682e1460ca1"}]}
