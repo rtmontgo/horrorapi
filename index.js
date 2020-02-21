@@ -16,7 +16,9 @@ const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
 
-mongoose.connect('mongodb://localhost:27017/horrorDB', { useNewUrlParser: true });
+// mongoose.connect('mongodb://localhost:27017/horrorDB', { useNewUrlParser: true });
+
+mongoose.connect('mongodb+srv://rtmontgo:Zombie3!@tmont-3jagp.mongodb.net/horrorapi?retryWrites=true&w=majority', { useNewUrlParser: true });
 
 app.use(morgan('common'));
 app.use(bodyParser.json());
