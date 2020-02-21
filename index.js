@@ -3,9 +3,6 @@ morgan = require('morgan');
 bodyParser = require('body-parser');
 uuid = require('uuid');
 
-const cors = require('cors');
-app.use(cors());
-
 const { check, validationResult } = require('express-validator');
 
 const app = express();
