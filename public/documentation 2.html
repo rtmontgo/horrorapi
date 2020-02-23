@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Home of Horror</title>
+</head>
+
+<body>
+  <header>
+    Horror API
+  </header>
+  <p>This API will serve to give horror fans information on movies in the horror genre.</p>
+  <table>
+    <thead>
+      <th>Business Logic</th>
+      <th>URL</th>
+      <th>HTTP Method</th>
+      <th>Request body data format</th>
+      <th>Response body data format</th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Get a list of movies</td>
+        <td>/movies</td>
+        <td>GET</td>
+        <td>None</td>
+        <td>JSON object with data about all the movies</td>
+      </tr>
+      <tr>
+        <td>Get data about a specific movie by title</td>
+        <td>/movies/[Title]</td>
+        <td>GET</td>
+        <td>None</td>
+        <td>JSON object about a single movie including description, genre, director, image URL</td>
+      </tr>
+      <tr>
+        <td>Get data about a specific genre by name</td>
+        <td>/movies/genres/[Genre]</td>
+        <td>GET</td>
+        <td>None</td>
+        <td>JSON object</td>
+      </tr>
+      <tr>
+        <td>Get data about a director by name</td>
+        <td>/movies/directors/[Director]</td>
+        <td>GET</td>
+        <td>None</td>
+        <td>JSON object about a single director including bio, birth year, and death year</td>
+      </tr>
+      <tr>
+        <td>Allow new user to register</td>
+        <td>/users</td>
+        <td>POST</td>
+        <td>JSON object in the form of:
+          </br> {Username: String, </br>
+          Password: String, </br>
+          Email: String, </br>
+          Birthday: Date }</td>
+        <td>Text message saying new user was registered successfully</td>
+      </tr>
+      <tr>
+        <td>Allow users to update their user info</td>
+        <td>/users/[Username]</td>
+        <td>PUT</td>
+        <td> JSON object in the form of:</br>
+          {Username: String, </br>
+          Password: String, </br>
+          Email: String, </br>
+          Birthday: Date}</td>
+        <td>JSON of updated profile info</td>
+      </tr>
+      <tr>
+        <td>Allow users to add a movie to their list of favorites</td>
+        <td>/users/[Username]/movies/[movieID]</td>
+        <td>POST</td>
+        <td>None</td>
+        <td>JSON of updated profile</td>
+      </tr>
+      <tr>
+        <td>Allow users to remove a movie to from their list of favorites</td>
+        <td>/users/[Username]/movies/[movieID]</td>
+        <td>DELETE</td>
+        <td>None</td>
+        <td>JSON of updated profile</td>
+      </tr>
+      <tr>
+        <td>Allow existing users to deregister</td>
+        <td>/users/[Username]</td>
+        <td>DELETE</td>
+        <td>None</td>
+        <td>Text message saying user’s profile was deleted successfully</td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+
+</html>
