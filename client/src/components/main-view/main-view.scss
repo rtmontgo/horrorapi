@@ -1,0 +1,25 @@
+$primary-color: #3a1717;
+$secondary-color: #4d402c;
+$tertiary-color: #201b12;
+$font-stack: 'Merriweather', sans-serif;
+
+.main-view {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.card {
+  display: grid;
+  margin: 2rem;
+  min-height: 37rem;
+  padding: 10px;
+  box-shadow: 0 2px 10px 0
+}
+
+.card:hover {
+  cursor: pointer;
+}
+
+div.navigation {
+  margin-left: 80%;
+}

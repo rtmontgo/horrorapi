@@ -1,4 +1,10 @@
 import React from 'react';
+import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import './movie-view.scss';
+import axios from 'axios';
 
 export class MovieView extends React.Component {
 
@@ -13,32 +19,46 @@ export class MovieView extends React.Component {
 
     if (!movie) return null;
 
+    function handleSubmit(event) {
+      event.preventDefault();
+      axios
+        .post(`https://homeofhorror.herokuapp.com/users/${localStorage.getItem('user')}/movies/${movie._id}`, {
+          Username: localStorage.getItem('user')
+        },
+          {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+          })
+        .then(response => {
+          console.log(response);
+          alert('Movie has been added to favorites');
+        })
+        .catch(event => {
+          console.log('error adding to favorites');
+          alert('Unable to add to favorites');
+        });
+    }
+
     return (
-      <div className="movie-view">
-        <img className="movie-poster" src={movie.ImagePath} />
-        <div className="movie-title">
-          <span className="label">Title: </span>
-          <span className="value">{movie.Title}</span>
-        </div>
-        <div className="movie-description">
-          <span className="label">Description: </span>
-          <span className="value">{movie.Description}</span>
-        </div>
-
-        <div className="movie-genre">
-          <span className="label">Genre: </span>
-          <span className="value">{movie.Genre.Name}</span>
-        </div>
-        <div className="movie-director">
-          <span className="label">Director: </span>
-          <span className="value">{movie.Director.Name}</span>
-        </div>
-        <Button block variant="outline-primary" onClick={event => handleSubmit(event)}>Add to Favorites</Button>
-        <Link to={`/`}><Button block variant="primary">Go Back</Button>
-        </Link>
+      <div>
+        <Card>
+          <Card.Img variant="top" src={movie.ImagePath} />
+          <Card.Body>
+            <Card.Title>{movie.Title || movie.Name}</Card.Title>
+            <Card.Text>Description: {movie.Description || movie.Bio}</Card.Text>
+            <Link to={`/genres/${movie.Genre.Name}`}><Button variant="link">{movie.Genre.Name}</Button></Link>
+            <Card.Text>Genre: {movie.Genre.Name}</Card.Text>
+            <Card.Text>
+              Description: {movie.Genre.Description}</Card.Text>
+            <Card.Text>Director:
+            <Link to={`/directors/${movie.Director.Name}`}><Button variant="link">{movie.Director.Name}</Button></Link>
+            </Card.Text>
+            <Card.Text>Bio: {movie.Director.Bio}</Card.Text>
+          </Card.Body>
+          <Button block variant="outline-primary" onClick={event => handleSubmit(event)}>Add to Favorites</Button>
+          <Link to={`/`}><Button block variant="primary">Go Back</Button>
+          </Link>
+        </Card>
       </div>
-
-
     );
   }
 }

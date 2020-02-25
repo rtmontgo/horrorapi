@@ -1,0 +1,18 @@
+$primary-color: #3a1717;
+$secondary-color: #4d402c;
+$tertiary-color: #201b12;
+$font-stack: Merriweather, sans-serif;
+$line-height: 1.4;
+$lines-to-show: 3;
+
+div.card-body {
+  line-height: $line-height;
+  -webkit-line-clamp: $lines-to-show;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+div.card {
+  text-align: center;
+}
