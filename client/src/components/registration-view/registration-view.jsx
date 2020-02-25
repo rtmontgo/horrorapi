@@ -15,7 +15,7 @@ export function RegistrationView(props) {
   const handleRegister = (e) => {
     e.preventDefault();
 
-    axios.post('https://homeofhorror.herokuapp.com/users', {
+    axios.post('https://horrorapi.herokuapp.com/users', {
       Username: username,
       Password: password,
       Email: email,
@@ -24,7 +24,7 @@ export function RegistrationView(props) {
       .then(response => {
         const data = response.data;
         console.log(data);
-        window.open('/client', '_self'); // the second argument '_self' is necessary so that the page will open in the current tab
+        window.open('/', '_self'); // the second argument '_self' is necessary so that the page will open in the current tab
       })
       .catch(e => {
         console.log('error registering the user')

@@ -1,14 +1,17 @@
 import React from 'react';
 import axios from 'axios';
 
+import { BrowserRouter as Router, Route } from "react-router-dom";
+
 import Button from 'react-bootstrap/Button';
 import { Link } from "react-router-dom";
 
+import { MovieCard } from '../movie-card/movie-card';
 import ProfileView from '../profile-view/profile-view';
 import { ProfileUpdate } from '../profile-view/profile-update';
 import { LoginView } from '../login-view/login-view';
 import { RegistrationView } from '../registration-view/registration-view';
-import MovieView from '../movie-view/movie-view';
+import { MovieView } from '../movie-view/movie-view';
 import DirectorView from '../director-view/director-view';
 import GenreView from '../genre-view/genre-view';
 import './main-view.scss';
@@ -19,14 +22,25 @@ export class MainView extends React.Component {
     super();
 
     this.state = {
-      movies: null,
-      selectedMovie: null,
+      movies: [],
       user: null
     };
   }
   // One of the "hooks" available in a React Component
   componentDidMount() {
-    axios.get('<my-api-endpoint/movies>')
+    let accessToken = localStorage.getItem('token');
+    if (accessToken !== null) {
+      this.setState({
+        user: localStorage.getItem('user')
+      });
+      this.getMovies(accessToken);
+    }
+  }
+
+  getMovies(token) {
+    axios.get('https://horrorapi.herokuapp.com/movies', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
       .then(response => {
         // Assign the result to the state
         this.setState({
@@ -38,24 +52,49 @@ export class MainView extends React.Component {
       });
   }
 
-  onMovieClick(movie) {
+  onLoggedIn(authData) {
+    console.log(authData);
     this.setState({
-      selectedMovie: movie
+      user: authData.user.Username
+    });
+
+    localStorage.setItem('token', authData.token);
+    localStorage.setItem('user', authData.user.Username);
+    this.getMovies(authData.token);
+  }
+
+  getUser(token) {
+    axios
+      .get('https://homeofhorror.herokuapp.com/users/', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(response => {
+        this.props.setLoggedUser(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
+  onButtonClick() {
+    this.setState({
+      selectedMovie: null
     });
   }
 
-  onLoggedIn(user) {
+  onLogout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     this.setState({
-      user
-    });
+      user: null
+    })
+    window.open('/client', '_self');
   }
 
   render() {
     // If the state isn't initialized, this will throw on runtime
     // before the data is initially loaded
-    const { movies, selectedMovie, user } = this.state;
-
-    if (!user) return <LoginView onLoggedIn={user => this.onLoggedIn(user)} />;
+    const { movies, user } = this.state;
 
     // Before the movies have been loaded
     if (!movies) return <div className="main-view" />;
