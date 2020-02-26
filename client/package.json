@@ -2,13 +2,14 @@
   "devDependencies": {
     "babel-core": "^6.26.3",
     "cssnano": "^4.1.10",
-    "sass": "^1.25.0"
+    "sass": "^1.26.1"
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "eslint-plugin-react-hooks": "^2.5.0",
     "postcss-scss": "^2.0.0",
     "prop-types": "^15.7.2",
-    "react": "^16.12.0",
+    "react": "^16.13.0",
     "react-bootstrap": "^1.0.0-beta.16",
     "react-redux": "^7.2.0",
     "react-router": "^5.1.2",
