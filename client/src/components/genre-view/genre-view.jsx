@@ -1,10 +1,7 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
 import { Link } from "react-router-dom";
-import PropTypes from 'prop-types';
 import './genre-view.scss';
-
-import { MovieCard } from '../movie-card/movie-card';
 
 export const GenreView = (props) => {
 
