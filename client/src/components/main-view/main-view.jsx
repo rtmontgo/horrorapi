@@ -3,17 +3,19 @@ import axios from 'axios';
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
+import { setMovies } from '../../actions/actions';
+
 import Button from 'react-bootstrap/Button';
 import { Link } from "react-router-dom";
 
-import { MovieCard } from '../movie-card/movie-card';
-import ProfileView from '../profile-view/profile-view';
+import MoviesList from '../movies-list/movies-list';
+import { ProfileView } from '../profile-view/profile-view';
 import { ProfileUpdate } from '../profile-view/profile-update';
 import { LoginView } from '../login-view/login-view';
 import { RegistrationView } from '../registration-view/registration-view';
 import { MovieView } from '../movie-view/movie-view';
-import DirectorView from '../director-view/director-view';
-import GenreView from '../genre-view/genre-view';
+import { DirectorView } from '../director-view/director-view';
+import { GenreView } from '../genre-view/genre-view';
 import './main-view.scss';
 
 export class MainView extends React.Component {
@@ -22,7 +24,6 @@ export class MainView extends React.Component {
     super();
 
     this.state = {
-      movies: [],
       user: null
     };
   }
@@ -43,9 +44,7 @@ export class MainView extends React.Component {
     })
       .then(response => {
         // Assign the result to the state
-        this.setState({
-          movies: response.data
-        });
+        this.props.setMovies(response.data);
       })
       .catch(function (error) {
         console.log(error);
@@ -53,7 +52,6 @@ export class MainView extends React.Component {
   }
 
   onLoggedIn(authData) {
-    console.log(authData);
     this.setState({
       user: authData.user.Username
     });
@@ -92,12 +90,10 @@ export class MainView extends React.Component {
   }
 
   render() {
-    // If the state isn't initialized, this will throw on runtime
-    // before the data is initially loaded
-    const { movies, user } = this.state;
 
-    // Before the movies have been loaded
-    if (!movies) return <div className="main-view" />;
+    let { movies } = this.props;
+    let { user } = this.state;
+
     return (
       <Router basename="/client">
         <div className="navigation">
@@ -151,3 +147,9 @@ export class MainView extends React.Component {
     );
   }
 }
+
+let mapStateToProps = state => {
+  return { movies: state.movies }
+}
+
+export default connect(mapStateToProps, { setMovies })(MainView);
