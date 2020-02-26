@@ -2,6 +2,7 @@ const express = require('express');
 morgan = require('morgan');
 bodyParser = require('body-parser');
 uuid = require('uuid');
+const path = require("path");
 
 const { check, validationResult } = require('express-validator');
 
@@ -20,6 +21,10 @@ mongoose.connect('mongodb+srv://rtmontgo:Zombie3!@tmont-3jagp.mongodb.net/horror
 app.use(morgan('common'));
 app.use(bodyParser.json());
 app.use(express.static('public'));
+app.use("/client", express.static(path.join(__dirname, "client", "dist")));
+app.get("/client/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+});
 
 var auth = require('./auth')(app);
 const passport = require('passport');
