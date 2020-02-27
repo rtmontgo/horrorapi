@@ -10,7 +10,7 @@ const { check, validationResult } = require('express-validator');
 const app = express();
 
 const mongoose = require('mongoose');
-const Models = require('../../models.js');
+const Models = require('./models.js');
 
 const Movies = Models.Movie;
 const Users = Models.User;
@@ -27,9 +27,9 @@ app.get("/client/*", (req, res) => {
   res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
 });
 
-var auth = require('../../auth')(app);
+var auth = require('./auth')(app);
 const passport = require('passport');
-require('../../passport');
+require('./passport');
 
 app.use(function (err, req, res, next) {
   console.error(err.stack);
