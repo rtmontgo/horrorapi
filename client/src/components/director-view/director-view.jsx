@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import { Link } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
@@ -38,3 +40,29 @@ export class DirectorView extends React.Component {
     );
   }
 }
+
+DirectorView.propTypes = {
+  director: PropTypes.exact({
+    _id: PropTypes.string,
+    Name: PropTypes.string.isRequired,
+    Bio: PropTypes.string.isRequired,
+    Birthyear: PropTypes.string,
+    Deathyear: PropTypes.string
+  }).isRequired,
+  movies: PropTypes.arrayOf(
+    PropTypes.shape({
+      Title: PropTypes.string,
+      ImageUrl: PropTypes.string,
+      Description: PropTypes.string,
+      Genre: PropTypes.exact({
+        _id: PropTypes.string,
+        Name: PropTypes.string,
+        Description: PropTypes.string
+      }),
+      Director: PropTypes.shape({
+        Name: PropTypes.string
+      })
+    })
+  ),
+  onToggleFavourite: PropTypes.func.isRequired
+};

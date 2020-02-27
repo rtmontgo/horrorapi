@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+
 import axios from 'axios';
 import Container from 'react-bootstrap/Container';
 
@@ -57,3 +59,6 @@ export function RegistrationView(props) {
   );
 }
 
+RegistrationView.propTypes = {
+  // no props so far
+};

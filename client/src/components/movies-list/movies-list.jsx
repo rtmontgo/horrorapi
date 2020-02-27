@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import { connect } from 'react-redux';
 
 import VisibilityFilterInput from '../visibility-filter-input/visibility-filter-input';
@@ -26,3 +28,23 @@ function MoviesList(props) {
 }
 
 export default connect(mapStateToProps)(MoviesList);
+
+MoviesGrid.propTypes = {
+
+  movies: PropTypes.arrayOf(
+    PropTypes.shape({
+      Title: PropTypes.string,
+      ImageUrl: PropTypes.string,
+      Description: PropTypes.string,
+      Genre: PropTypes.exact({
+        _id: PropTypes.string,
+        Name: PropTypes.string,
+        Description: PropTypes.string
+      }),
+      Director: PropTypes.shape({
+        Name: PropTypes.string
+      })
+    })
+  ),
+  onToggleFavourite: PropTypes.func.isRequired
+};

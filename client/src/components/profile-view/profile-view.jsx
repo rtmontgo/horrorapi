@@ -1,12 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import './profile-view.scss';
 import { Link } from "react-router-dom";
-
-import { ProfileUpdate } from '../profile-view/profile-update';
 
 export class ProfileView extends React.Component {
 
@@ -72,7 +71,7 @@ export class ProfileView extends React.Component {
   }
 
   render() {
-    const { username, email, birthdate, favoriteMovies } = this.state;
+    const { favoriteMovies } = this.state;
 
     return (
       <Card className="profile-view" style={{ width: '30rem' }}>
@@ -118,3 +117,32 @@ export class ProfileView extends React.Component {
     );
   }
 }
+
+ProfileView.propTypes = {
+  userProfile: PropTypes.shape({
+    _id: PropTypes.string,
+    FavoriteMovies: PropTypes.array,
+    Name: PropTypes.string,
+    Username: PropTypes.string,
+    Password: PropTypes.string,
+    Email: PropTypes.string,
+    Birthday: PropTypes.string
+  }).isRequired,
+  movies: PropTypes.arrayOf(
+    PropTypes.shape({
+      Title: PropTypes.string,
+      ImageUrl: PropTypes.string,
+      Description: PropTypes.string,
+      Genre: PropTypes.exact({
+        _id: PropTypes.string,
+        Name: PropTypes.string,
+        Description: PropTypes.string
+      }),
+      Director: PropTypes.shape({
+        Name: PropTypes.string
+      })
+    })
+  ),
+  token: PropTypes.string.isRequired,
+  onLoggedIn: PropTypes.func
+};

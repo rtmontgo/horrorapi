@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Button from 'react-bootstrap/Button';
 import { Link } from "react-router-dom";
 import './genre-view.scss';
@@ -24,24 +26,26 @@ export const GenreView = (props) => {
   );
 }
 
-// GenreView.propTypes = {
-// genre: PropTypes.exact({
-// Name: PropTypes.string,
-// Description: PropTypes.string
-// }),
-// movie: PropTypes.arrayOf(
-// PropTypes.shape({
-// Title: PropTypes.string,
-// ImageUrl: PropTypes.string,
-// Description: PropTypes.string,
-// Genre: PropTypes.exact({
-// Name: PropTypes.string,
-// Description: PropTypes.string
-// }),
-// Director: PropTypes.shape({
-// Name: PropTypes.string,
-// Bio: PropTypes.string
-// })
-// })
-// )
-// };
+GenreView.propTypes = {
+  genre: PropTypes.exact({
+    _id: PropTypes.string,
+    Name: PropTypes.string,
+    Description: PropTypes.string
+  }).isRequired,
+  movies: PropTypes.arrayOf(
+    PropTypes.shape({
+      Title: PropTypes.string,
+      ImageUrl: PropTypes.string,
+      Description: PropTypes.string,
+      Genre: PropTypes.exact({
+        _id: PropTypes.string,
+        Name: PropTypes.string,
+        Description: PropTypes.string
+      }),
+      Director: PropTypes.shape({
+        Name: PropTypes.string
+      })
+    })
+  ),
+  onToggleFavourite: PropTypes.func.isRequired
+};

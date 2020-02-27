@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 
@@ -155,3 +156,23 @@ let mapStateToProps = state => {
 }
 
 export default connect(mapStateToProps, { setMovies, setLoggedInUser })(MainView);
+
+MainView.propTypes = {
+
+  movies: PropTypes.arrayOf(
+    PropTypes.shape({
+      Title: PropTypes.string,
+      ImageUrl: PropTypes.string,
+      Description: PropTypes.string,
+      Genre: PropTypes.exact({
+        _id: PropTypes.string,
+        Name: PropTypes.string,
+        Description: PropTypes.string
+      }),
+      Director: PropTypes.shape({
+        Name: PropTypes.string
+      })
+    })
+  ),
+  onToggleFavourite: PropTypes.func.isRequired
+};
