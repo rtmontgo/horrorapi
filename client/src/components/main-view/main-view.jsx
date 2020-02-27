@@ -174,5 +174,5 @@ MainView.propTypes = {
       })
     })
   ),
-  onToggleFavourite: PropTypes.func.isRequired
+  onToggleFavourite: PropTypes.func
 };
