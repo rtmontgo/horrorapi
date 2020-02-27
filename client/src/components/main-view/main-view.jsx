@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
-import { setMovies } from '../../actions/actions';
+import { setMovies, setLoggedInUser } from '../../actions/actions';
 
 import Button from 'react-bootstrap/Button';
 import { Link } from "react-router-dom";
@@ -154,4 +154,4 @@ let mapStateToProps = state => {
   return { movies: state.movies }
 }
 
-export default connect(mapStateToProps, { setMovies })(MainView);
+export default connect(mapStateToProps, { setMovies, setLoggedInUser })(MainView);
