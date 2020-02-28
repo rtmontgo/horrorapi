@@ -28,18 +28,18 @@ import { DirectorView } from './components/director-view/director-view';
 import { ProfileView } from './components/profile-view/profile-view';
 
 
-const DefaultLayout = ({ component: Component, ...rest }) => {
+const DefaultLayout = ({ component: Component }) => {
   return (
     <Container className="mt-5">
-      <Component {...rest} />
+      <Component />
     </Container>
   );
 };
 
 const DefaultLayoutRoute = ({ component: Component, ...rest }) => {
   return (
-    <Route {...rest} render={matchProps => (
-      <DefaultLayout component={Component} {...matchProps} {...rest} />
+    <Route render={matchProps => (
+      <DefaultLayout component={Component} {...matchProps} />
     )} />
   )
 };
