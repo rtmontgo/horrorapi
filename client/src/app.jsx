@@ -60,13 +60,15 @@ class App extends React.Component {
   componentDidMount() {
     let accessToken = localStorage.getItem('token');
     if (accessToken !== null) {
+      let userProfileString = localStorage.getItem('user-profile');
+      let userProfile = JSON.parse(userProfileString);
       this.setState({
-        user: localStorage.getItem('user')
+        token: accessToken
       });
-      this.getMovies(accessToken);
+      this.props.setUser(userProfile);
     }
+    this.getMovies(accessToken);
   }
-
   getMovies(token) {
     // const url_root = 'http://localhost:3000'
     const url_root = 'https://horrorapi.herokuapp.com'
@@ -88,34 +90,34 @@ class App extends React.Component {
   }
 
   onLoggedIn(authData) {
-    let user = null;
+    let userProfile = null;
     let token = null;
     if (authData) {
-      user = authData.user;
+      userProfile = authData.user;
       token = authData.token;
     }
 
-    this.props.setUser(user);
+    this.props.setUser(userProfile);
     this.setState({
       token
     });
 
-    if (user) {
+    if (userProfile) {
       localStorage.setItem('token', authData.token);
-      localStorage.setItem('user', JSON.stringify(authData.user));
+      localStorage.setItem('user-profile', JSON.stringify(authData.user));
       this.getMovies(authData.token);
     } else {
       localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      localStorage.removeItem('user-profile');
     }
 
     window.open('/client', '_self');
   }
 
-  onUserUpdate(user, goHome = true) {
-    if (user) {
-      localStorage.setItem('user', JSON.stringify(user));
-      this.props.setUser(user);
+  onUserUpdate(userProfile, goHome = true) {
+    if (userProfile) {
+      localStorage.setItem('user-profile', JSON.stringify(userProfile));
+      this.props.setUser(userProfile);
       if (goHome) {
         window.open('/client', '_self'); // the second argument '_self' is necessary so that the page will open in the current tab
       }
@@ -132,7 +134,7 @@ class App extends React.Component {
       return;
     }
 
-    const username = user.Username;
+    const username = userProfile.Username;
 
     console.log('toggle favorite movie', movieId, 'for user', username);
 
@@ -146,9 +148,9 @@ class App extends React.Component {
     let axiosAction = (url, options) => axios.post(url, null, options);
 
     // deep copy of the user profile (used to preview the change)
-    const newTempUserProfile = JSON.parse(JSON.stringify(user));
+    const newTempUserProfile = JSON.parse(JSON.stringify(userProfile));
 
-    let favoriteMovieIndex = user.FavoriteMovies.indexOf(movieId);
+    let favoriteMovieIndex = userProfile.FavoriteMovies.indexOf(movieId);
     if (favoriteMovieIndex === -1) {
       console.log('add to favorites.');
       // update the change for faster feedback
@@ -179,7 +181,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { movies, user } = this.props;
+    const { movies, userProfile } = this.props;
     const { token } = this.state;
 
     // the log in / log out function
@@ -188,7 +190,7 @@ class App extends React.Component {
     const onToggleFavourite = movieId => this.onToggleFavourite(movieId);
 
     // these are propagated through all the routes
-    const routeProps = { token, onLoggedIn, user, onToggleFavourite };
+    const routeProps = { token, onLoggedIn, userProfile, onToggleFavourite };
 
     // if movies are not yet loaded, return a spinner
     if (!movies) {
@@ -198,7 +200,7 @@ class App extends React.Component {
     return (
       <Router basename="/client">
         <div className="navigation">
-          <Link to={`/users/${localStorage.getItem('user')}`}>
+          <Link to={`/users/${localStorage.getItem('userProfile')}`}>
             <Button className="profile" variant='outline-info'>Profile</Button>
           </Link></div>
         <Switch>
@@ -220,11 +222,7 @@ class App extends React.Component {
           <Route
             path="/directors/:name"
             render={(matchProps) => <DefaultLayout {...matchProps} {...routeProps} component={DirectorView} director={movies.find(m => m.Director.Name === matchProps.match.params.directorName).Director} movies={movies.filter(m => m.Director.Name === matchProps.match.params.directorName)} />} />
-          <Route path="/users/:Username" render={({ match }) => { return <ProfileView movies={movies} /> }
-          } />
-          <Route path="/update/:Username" render={() => <ProfileUpdate />
-          }
-          />
+          <Route path="/users/:Username" render={(matchProps) => <DefaultLayout {...matchProps} {...routeProps} component={ProfileView} userProfile={userProfile} movies={movies.filter(m => userProfile && userProfile.FavoriteMovies.includes(m._id))} onUserUpdate={userProfile => this.onUserUpdate(userProfile)} />} />
         </Switch>
       </Router>
     );
@@ -234,11 +232,11 @@ class App extends React.Component {
 let mapStateToProps = state => {
   return {
     movies: state.movies,
-    user: state.user
+    userProfile: state.userProfile
   };
 }
 
-export default connect(mapStateToProps, { setMovies, setLoggedIn })(App);
+export default connect(mapStateToProps, { setMovies, setUser })(App);
 
 DefaultLayout.propTypes = {
   onLoggedIn: PropTypes.func.isRequired

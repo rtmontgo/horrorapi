@@ -9,7 +9,7 @@ import './movies-list.scss';
 
 export function MoviesList(props) {
 
-  const { movies, title, user, onToggleFavourite } = props;
+  const { movies, title, userProfile, onToggleFavourite } = props;
 
   return (
     movies.length === 0
@@ -22,8 +22,8 @@ export function MoviesList(props) {
               key={movie._id}
               movie={movie}
               onToggleFavourite={movieId => onToggleFavourite(movieId)}
-              isFavorite={user && user.FavoriteMovies.includes(movie._id)}
-              user={user}
+              isFavorite={userProfile && userProfile.FavoriteMovies.includes(movie._id)}
+              userProfile={userProfile}
             />
           ))}
         </div>
