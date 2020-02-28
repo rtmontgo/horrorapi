@@ -1,33 +1,36 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { connect } from 'react-redux';
-
-import VisibilityFilterInput from '../visibility-filter-input/visibility-filter-input';
+// import app components
 import { MovieCard } from '../movie-card/movie-card';
 
-const mapStateToProps = state => {
-  const { visibilityFilter } = state;
-  return { visibilityFilter };
-};
+// imports for files to bundle
+import './movies-list.scss';
 
-function MoviesList(props) {
-  const { movies, visibilityFilter } = props;
-  let filteredMovies = movies;
+export function MoviesList(props) {
 
-  if (visibilityFilter !== '') {
-    filteredMovies = movies.filter(m => m.Title.includes(visibilityFilter));
-  }
+  const { movies, title, user, onToggleFavourite } = props;
 
-  if (!movies) return <div className="main-view" />;
-
-  return <div className="movies-list">
-    <VisibilityFilterInput visibilityFilter={visibilityFilter} />
-    {filteredMovies.map(m => <MovieCard key={m._id} movie={m} />)}
-  </div>;
+  return (
+    movies.length === 0
+      ? <React.Fragment></React.Fragment>
+      : (<React.Fragment>
+        {title && (<React.Fragment><h5>{title}</h5><br /></React.Fragment>)}
+        <div className="movies-list card-deck">
+          {movies.map(movie => (
+            <MovieCard
+              key={movie._id}
+              movie={movie}
+              onToggleFavourite={movieId => onToggleFavourite(movieId)}
+              isFavorite={user && user.FavoriteMovies.includes(movie._id)}
+              user={user}
+            />
+          ))}
+        </div>
+      </React.Fragment>
+      )
+  );
 }
-
-export default connect(mapStateToProps)(MoviesList);
 
 MoviesGrid.propTypes = {
 
