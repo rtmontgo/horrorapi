@@ -36,7 +36,7 @@ const DefaultLayout = ({ component: Component }) => {
   );
 };
 
-const DefaultLayoutRoute = ({ component: Component, ...rest }) => {
+const DefaultLayoutRoute = ({ component: Component }) => {
   return (
     <Route render={matchProps => (
       <DefaultLayout component={Component} {...matchProps} />
