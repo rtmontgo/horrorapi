@@ -8,7 +8,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
 // import app components
-import { MoviesList } from '../movies-grid/movies-grid';
+import { MoviesList } from '../movies-list/movies-list';
 
 // imports for files to bundle
 import './profile-view.scss';
