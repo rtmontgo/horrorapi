@@ -8,7 +8,7 @@ import Col from 'react-bootstrap/Col';
 import Spinner from 'react-bootstrap/Spinner';
 
 // import app components
-import { MoviesList } from '../movies-grid/movies-grid';
+import { MoviesList } from '../movies-list/movies-list';
 import VisibilityFilterInput from '../visibility-filter-input/visibility-filter-input';
 
 function NoMovies(props) {
