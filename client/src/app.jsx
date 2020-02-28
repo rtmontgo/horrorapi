@@ -68,14 +68,22 @@ class App extends React.Component {
   }
 
   getMovies(token) {
-    axios.get('https://homeofhorror.herokuapp.com/movies', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(response => {
-        this.props.setMovies(response.data);
+    // const url_root = 'http://localhost:3000'
+    const url_root = 'https://horrorapi.herokuapp.com'
+    const movies_url = `${url_root}/movies`;
+    let options = {}
+    if (token) {
+      options = {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+    }
+    axios.get(movies_url, options)
+      .then(res => {
+        // update the state
+        this.props.setMovies(res.data);
       })
-      .catch(function (error) {
-        console.log(error);
+      .catch(err => {
+        console.error(err);
       });
   }
 
