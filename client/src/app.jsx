@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 
 import { connect } from 'react-redux';
-import { setMovies, setLoggedIn } from './actions/actions';
+import { setMovies, setUser } from './actions/actions';
 
 import { Route, Switch } from 'react-router-dom';
 // import { Router } from "react-router";

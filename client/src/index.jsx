@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
+import devToolsEnhancer from 'remote-redux-devtools';
 import { Provider } from 'react-redux';
 
 import moviesApp from './reducers/reducers';
@@ -8,7 +9,7 @@ import moviesApp from './reducers/reducers';
 // Import statement to indicate that you need to bundle `./index.scss`
 import './index.scss';
 
-const store = createStore(moviesApp);
+const store = createStore(moviesApp, devToolsEnhancer({ realtime: true }));
 
 import App from './app.jsx'
 
