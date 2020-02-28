@@ -1,161 +1,82 @@
 import React from 'react';
-import axios from 'axios';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { connect } from 'react-redux';
+// get bootstrap imports
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Spinner from 'react-bootstrap/Spinner';
 
-import { BrowserRouter as Router, Route } from "react-router-dom";
+// import app components
+import { MoviesList } from '../movies-grid/movies-grid';
+import VisibilityFilterInput from '../visibility-filter-input/visibility-filter-input';
 
-import { setMovies, setLoggedInUser } from '../../actions/actions';
+function NoMovies(props) {
+  return (
+    <div className="spinner-view">
+      <Row className="justify-content-center">
+        <Col className="text-center">
+          <Spinner animation="border" role="status">
+            <span className="sr-only">Loading...</span>
+          </Spinner>
+        </Col>
+      </Row>
+    </div>
+  );
+};
 
-import Button from 'react-bootstrap/Button';
-import { Link } from "react-router-dom";
+export function MainView(props) {
 
-import MoviesList from '../movies-list/movies-list';
-import { ProfileView } from '../profile-view/profile-view';
-import { ProfileUpdate } from '../profile-view/profile-update';
-import { LoginView } from '../login-view/login-view';
-import { RegistrationView } from '../registration-view/registration-view';
-import { MovieView } from '../movie-view/movie-view';
-import { DirectorView } from '../director-view/director-view';
-import { GenreView } from '../genre-view/genre-view';
-import './main-view.scss';
-
-export class MainView extends React.Component {
-
-  constructor() {
-    super();
-
-    this.state = {
-      user: null
-    };
+  const { movies, userProfile, onToggleFavourite } = props;
+  const { visibilityFilter, sortFilter } = props;
+  // shallow copy
+  let filteredMovies = [...movies];
+  // filter movies according to a specified filter
+  if (visibilityFilter !== '') {
+    filteredMovies = movies.filter(m => m.Title.toLowerCase().includes(visibilityFilter.toLowerCase()));
   }
-  // One of the "hooks" available in a React Component
-  componentDidMount() {
-    let accessToken = localStorage.getItem('token');
-    if (accessToken !== null) {
-      this.setState({
-        user: localStorage.getItem('user')
-      });
-      this.getMovies(accessToken);
-    }
-  }
-
-  getMovies(token) {
-    axios.get('https://horrorapi.herokuapp.com/movies', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(response => {
-        // Assign the result to the state
-        this.props.setMovies(response.data);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+  // sort movies according to the sort filter
+  switch (sortFilter) {
+    case 'Movie Title':
+      filteredMovies.sort((a, b) => (a.Title > b.Title) ? 1 : -1)
+      break;
+    default:
+      break;
   }
 
-  onLoggedIn(authData) {
-    this.setState({
-      user: authData.user.Username
-    });
-
-    localStorage.setItem('token', authData.token);
-    localStorage.setItem('user', authData.user.Username);
-    this.getMovies(authData.token);
-  }
-
-  getUser(token) {
-    axios
-      .get('https://homeofhorror.herokuapp.com/users/', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      .then(response => {
-        this.props.setLoggedUser(response.data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }
-
-  onButtonClick() {
-    this.setState({
-      selectedMovie: null
-    });
-  }
-
-  onLogout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    this.setState({
-      user: null
-    })
-    window.open('/client', '_self');
-  }
-
-  render() {
-
-    let { movies } = this.props;
-    let { user } = this.state;
-
-    return (
-      <Router basename="/client">
-        <div className="navigation">
-          <Link to={`/users/${localStorage.getItem('user')}`}>
-            <Button className="profile" variant='outline-info'>Profile</Button>
-          </Link>
-
-          <Button className="logout" variant='outline-info' onClick={() => this.onLogout()} >Log Out</Button>
-        </div >
-
+  return (
+    movies.length === 0
+      ? <NoMovies />
+      : (
         <div className="main-view">
-          <Route exact path="/" render={() => {
-            if (!user) return <LoginView onLoggedIn={user => this.onLoggedIn(user)} />;
-            return <MoviesList movies={movies} />;
-          }
-          } />
-
-          <Route path="/register" render={() => <RegistrationView />}
-          />
-
-          <Route path="/movies/:movieId" render={({ match }) => <MovieView movie={movies.find(m => m._id === match.params.movieId)} />} />
-
-          <Route
-            path='/directors/:name'
-            render={({ match }) => {
-              if (!movies) return <div className='main-view' />;
-              return <DirectorView
-                director={
-                  movies.find(m => m.Director.Name === match.params.name).Director}
+          <Row className="mb-3">
+            <Col xs={12} sm={4}>
+              <VisibilityFilterInput visibilityFilter={visibilityFilter} />
+            </Col>
+            <Col xs={12} sm={4}>
+              <SortFilterDropdown sortFilter={sortFilter} />
+            </Col>
+          </Row>
+          {filteredMovies.length === 0
+            ? <div className="text-center">no movies found</div>
+            : (
+              <MoviesList
+                movies={filteredMovies}
+                onToggleFavourite={movieId => onToggleFavourite(movieId)}
+                userProfile={userProfile}
               />
-            }}
-          />
-          <Route
-            path='/genres/:name'
-            render={({ match }) => {
-              if (!movies || !movies.length) return <div className="main-view" />;
-              return <GenreView genre={movies.find(m => m.Genre.Name === match.params.name).Genre} />
-            }
-            }
-          />
-
-          <Route path="/users/:Username" render={({ match }) => { return <ProfileView movies={movies} /> }
-          } />
-
-          <Route path="/update/:Username" render={() => <ProfileUpdate />
-          }
-          />
-
+            )}
         </div>
-      </Router >
-    );
-  }
+      )
+  );
 }
 
-let mapStateToProps = state => {
-  return { movies: state.movies }
-}
+const mapStateToProps = state => {
+  const { visibilityFilter, sortFilter } = state;
+  return { visibilityFilter, sortFilter };
+};
 
-export default connect(mapStateToProps, { setMovies, setLoggedInUser })(MainView);
+export default connect(mapStateToProps)(MainView);
 
 MainView.propTypes = {
 
@@ -170,9 +91,10 @@ MainView.propTypes = {
         Description: PropTypes.string
       }),
       Director: PropTypes.shape({
-        Name: PropTypes.string
+        Name: PropTypes.string,
+        Bio: PropTypes.string
       })
     })
   ),
-  onToggleFavourite: PropTypes.func
+  onToggleFavourite: PropTypes.func.isRequired
 };
