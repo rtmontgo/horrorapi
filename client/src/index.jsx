@@ -9,7 +9,7 @@ import moviesApp from './reducers/reducers';
 // Import statement to indicate that you need to bundle `./index.scss`
 import './index.scss';
 
-const store = createStore(moviesApp, devToolsEnhancer({ realtime: true }));
+const store = createStore(reducer, moviesApp, devToolsEnhancer({ realtime: true }));
 
 import App from './app.jsx'
 
