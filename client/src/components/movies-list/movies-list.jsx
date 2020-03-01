@@ -1,53 +1,47 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
-// import app components
+import { connect } from 'react-redux';
+import VisibilityFilterInput from '../visibility-filter-input/visibility-filter-input';
 import { MovieCard } from '../movie-card/movie-card';
-
-// imports for files to bundle
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
 import './movies-list.scss';
 
-export function MoviesList(props) {
+const mapStateToProps = state => {
+  const { movies, visibilityFilter } = state;
 
-  const { movies, title, userProfile, onToggleFavourite } = props;
+  let moviesToShow = movies
+
+  if (visibilityFilter !== '') {
+    moviesToShow = moviesToShow.filter(m =>
+      m.Title.toLowerCase().includes(visibilityFilter.toLowerCase())
+    );
+  }
+
+  return { movies: moviesToShow };
+};
+
+function MoviesList(props) {
+  const { movies } = props;
+
+  if (!movies) return <div className="main-view" />;
 
   return (
-    movies.length === 0
-      ? <React.Fragment></React.Fragment>
-      : (<React.Fragment>
-        {title && (<React.Fragment><h5>{title}</h5><br /></React.Fragment>)}
-        <div className="movies-list card-deck">
-          {movies.map(movie => (
-            <MovieCard
-              key={movie._id}
-              movie={movie}
-              onToggleFavourite={movieId => onToggleFavourite(movieId)}
-              isFavorite={userProfile && userProfile.FavoriteMovies.includes(movie._id)}
-              userProfile={userProfile}
-            />
+
+    <div className="movie-list">
+      <br></br>
+      <VisibilityFilterInput />
+      <Container>
+        <Row>
+          {movies.map(m => (
+            <Col key={m._id} xs={8} sm={8} md={6} lg={"auto"}>
+              <MovieCard key={m.id} movie={m} />
+            </Col>
           ))}
-        </div>
-      </React.Fragment>
-      )
+        </Row>
+      </Container>
+    </div>
   );
 }
 
-MoviesGrid.propTypes = {
-
-  movies: PropTypes.arrayOf(
-    PropTypes.shape({
-      Title: PropTypes.string,
-      ImageUrl: PropTypes.string,
-      Description: PropTypes.string,
-      Genre: PropTypes.exact({
-        _id: PropTypes.string,
-        Name: PropTypes.string,
-        Description: PropTypes.string
-      }),
-      Director: PropTypes.shape({
-        Name: PropTypes.string
-      })
-    })
-  ),
-  onToggleFavourite: PropTypes.func.isRequired
-};
+export default connect(mapStateToProps)(MoviesList);

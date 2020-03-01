@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-
-import axios from 'axios';
-import Container from 'react-bootstrap/Container';
-
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import './registration-view.scss';
+import axios from 'axios';
 
 export function RegistrationView(props) {
   const [username, setUsername] = useState('');
@@ -14,22 +10,24 @@ export function RegistrationView(props) {
   const [email, setEmail] = useState('');
   const [birthdate, setBirthdate] = useState('');
 
-  const handleRegister = (e) => {
+  const handleSubmit = e => {
     e.preventDefault();
-
-    axios.post('https://horrorapi.herokuapp.com/users', {
-      Username: username,
-      Password: password,
-      Email: email,
-      Birthdate: birthdate
-    })
+    let userEndpoint = 'https://horrorapi.herokuapp.com/users/';
+    /* Send a request to the server for authentication */
+    axios
+      .post(userEndpoint, {
+        Username: username,
+        Password: password,
+        Email: email,
+        Birthdate: birthdate
+      })
       .then(response => {
         const data = response.data;
         console.log(data);
-        window.open('/client', '_self'); // the second argument '_self' is necessary so that the page will open in the current tab
+        window.open('/', '_self');
       })
-      .catch(e => {
-        console.log('error registering the user')
+      .catch(err => {
+        console.error('user already exists: ', err);
       });
   };
 
@@ -58,7 +56,3 @@ export function RegistrationView(props) {
     </Container>
   );
 }
-
-RegistrationView.propTypes = {
-  // no props so far
-};

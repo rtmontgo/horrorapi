@@ -1,88 +1,207 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import axios from 'axios';
+import MovieView from '../movie-view/movie-view';
+import { LoginView } from '../login-view/login-view';
+import DirectorView from '../director-view/director-view';
+import ProfileView from '../profile-view/profile-view';
+import GenreView from '../genre-view/genre-view';
+import { RegistrationView } from '../registration-view/registration-view';
+import Container from 'react-bootstrap/Container';
 
-// get bootstrap imports
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Spinner from 'react-bootstrap/Spinner';
+import { Link } from 'react-router-dom';
+import Button from 'react-bootstrap/Button';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import './main-view.scss';
+import { connect } from 'react-redux';
 
-// import app components
-import { MoviesList } from '../movies-list/movies-list';
-import VisibilityFilterInput from '../visibility-filter-input/visibility-filter-input';
+import MoviesList from '../movies-list/movies-list';
 
-function NoMovies(props) {
-  return (
-    <div className="spinner-view">
-      <Row className="justify-content-center">
-        <Col className="text-center">
-          <Spinner animation="border" role="status">
-            <span className="sr-only">Loading...</span>
-          </Spinner>
-        </Col>
-      </Row>
-    </div>
-  );
-};
+import { setMovies, setLoggedInUser } from '../../actions/actions';
 
-export function MainView(props) {
+export class MainView extends React.Component {
+  constructor() {
+    //Call the superclass constructor
+    // so React can initialize it
+    super();
 
-  const { movies, userProfile, onToggleFavourite } = props;
-  const { visibilityFilter } = props;
-  // shallow copy
-  let filteredMovies = [...movies];
-  // filter movies according to a specified filter
-  if (visibilityFilter !== '') {
-    filteredMovies = movies.filter(m => m.Title.toLowerCase().includes(visibilityFilter.toLowerCase()));
+    // Iitialize the state to an empty object so we can destructure it later
+    this.state = {
+      movies: [],
+      user: null,
+      profileData: null
+    };
   }
 
-  return (
-    movies.length === 0
-      ? <NoMovies />
-      : (
-        <div className="main-view">
-          <Row className="mb-3">
-            <Col xs={12} sm={4}>
-              <VisibilityFilterInput visibilityFilter={visibilityFilter} />
-            </Col>
-          </Row>
-          {filteredMovies.length === 0
-            ? <div className="text-center">no movies found</div>
-            : (
-              <MoviesList
-                movies={filteredMovies}
-                onToggleFavourite={movieId => onToggleFavourite(movieId)}
-                userProfile={userProfile}
-              />
-            )}
-        </div>
-      )
-  );
-}
+  componentDidMount() {
+    let accessToken = localStorage.getItem('token');
+    if (accessToken !== null) {
+      this.setState({
+        user: localStorage.getItem('user'),
+        profileData: localStorage.getItem('user')
+      });
+      this.getMovies(accessToken);
+    }
+  }
 
-const mapStateToProps = state => {
-  const { visibilityFilter } = state;
-  return { visibilityFilter };
-};
-
-export default connect(mapStateToProps)(MainView);
-
-MainView.propTypes = {
-
-  movies: PropTypes.arrayOf(
-    PropTypes.shape({
-      Title: PropTypes.string,
-      ImageUrl: PropTypes.string,
-      Description: PropTypes.string,
-      Genre: PropTypes.exact({
-        _id: PropTypes.string,
-        Name: PropTypes.string,
-        Description: PropTypes.string
-      }),
-      Director: PropTypes.shape({
-        Name: PropTypes.string
+  getUser(token) {
+    let username = localStorage.getItem('user');
+    let userEndpoint = 'https://horrorapi.herokuapp.com/users/';
+    let url = `${userEndpoint}${username}`;
+    axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${token}` }
       })
-    })
-  ),
-  onToggleFavourite: PropTypes.func.isRequired
-};
+      .then(response => {
+        this.props.setLoggedInUser(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  onLoggedIn(authData) {
+    console.log(authData);
+    this.setState({
+      user: authData.user.Username,
+      profileData: authData.user
+    });
+    this.props.setLoggedInUser(authData.user);
+    localStorage.setItem('token', authData.token);
+    localStorage.setItem('user', authData.user.Username);
+    this.getMovies(authData.token);
+  }
+
+  getMovies(token) {
+    axios
+      .get('horrorapi.herokuapp.com/movies', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(response => {
+        // Assign the result to the state
+        this.props.setMovies(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  onSignedIn(user) {
+    this.setState({
+      user: user
+    });
+  }
+
+  logOut() {
+    //Clears Storage
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('movies');
+
+    //resets user state to render again
+    this.setState({
+      user: null
+    });
+  }
+
+  //This overrides the render() method of the superclass
+  //No need to call super() though, as it does nothing by default
+  render() {
+    // If the state isn't initialized, this will throw on runtime
+    // before the data is initially loaded
+    const { user } = this.state;
+
+    return (
+      <Router>
+        <header className="header">
+          <Link to={'/'}>
+            <div alt="clap" className="logohme"></div>
+          </Link>
+          <p className="logo" id="hide">
+            Welcome to the Dreary Database
+          </p>
+          <div className="nav">
+            {user && (
+              <div>
+                <input className="menu-btn" type="checkbox" id="menu-btn" />
+                <label className="menu-icon" htmlFor="menu-btn">
+                  <span className="navicon"></span>
+                </label>
+                <ul className="menu">
+                  <li>
+                    <Link to={'/profile'}>
+                      <Button id="profilebtn" variant="outline-dark">
+                        Profile
+                      </Button>
+                    </Link>
+                  </li>
+                  <li>
+                    <Button
+                      id="logoutbtn"
+                      variant="outline-dark"
+                      onClick={() => this.logOut()}
+                    >
+                      {' '}
+                      LogOut
+                    </Button>
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
+        </header>
+
+        <Container className="main-view">
+          <Row>
+            <Route
+              exact
+              path="/"
+              render={() => {
+                if (!user)
+                  return (
+                    <LoginView onLoggedIn={user => this.onLoggedIn(user)} />
+                  );
+                return <MoviesList />;
+              }}
+            />
+            <Route
+              path="/movies/:movieId"
+              render={({ match }) => (
+                <MovieView movieId={match.params.movieId} />
+              )}
+            />
+
+            <Route
+              path="/register"
+              render={() => (
+                <RegistrationView onSignedIn={user => this.onSignedIn(user)} />
+              )}
+            />
+
+            <Route
+              exact
+              path="/genre/:name"
+              render={({ match }) => (
+                <GenreView genreName={match.params.name} />
+              )}
+            />
+
+            <Route
+              exact
+              path="/director/:name"
+              render={({ match }) => (
+                <DirectorView directorName={match.params.name} />
+              )}
+            />
+
+            <Route exact path="/users/:username" render={() => <ProfileView />} />
+          </Row>
+        </Container>
+      </Router>
+    );
+  }
+}
+export default connect(
+  null,
+  { setMovies, setLoggedInUser }
+)(MainView);

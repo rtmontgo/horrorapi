@@ -1,14 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import { connect } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 import { Link } from "react-router-dom";
 import './genre-view.scss';
 
-export const GenreView = (props) => {
+function GenreView(props) {
+  const { movies, genreName } = props;
 
-  // if (!genre) return null;
-  const { genre } = props;
+  if (!movies || !movies.length) return null;
+
+  const genre = movies.find(movie => movie.Genre.Name === genreName);
 
   return (
     <div className="genre-view">
@@ -26,26 +28,4 @@ export const GenreView = (props) => {
   );
 }
 
-GenreView.propTypes = {
-  genre: PropTypes.exact({
-    _id: PropTypes.string,
-    Name: PropTypes.string,
-    Description: PropTypes.string
-  }).isRequired,
-  movies: PropTypes.arrayOf(
-    PropTypes.shape({
-      Title: PropTypes.string,
-      ImageUrl: PropTypes.string,
-      Description: PropTypes.string,
-      Genre: PropTypes.exact({
-        _id: PropTypes.string,
-        Name: PropTypes.string,
-        Description: PropTypes.string
-      }),
-      Director: PropTypes.shape({
-        Name: PropTypes.string
-      })
-    })
-  ),
-  onToggleFavourite: PropTypes.func.isRequired
-};
+export default connect(({ movies }) => ({ movies }))(GenreView);

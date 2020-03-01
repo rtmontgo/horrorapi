@@ -1,205 +1,299 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import axios from 'axios';
-
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
+import React from 'react';
+//import PropTypes from 'prop-types';
 import Button from 'react-bootstrap/Button';
-
-// import app components
-import { MoviesList } from '../movies-list/movies-list';
-
-// imports for files to bundle
 import './profile-view.scss';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import Form from 'react-bootstrap/Form';
+//import Card from 'react-bootstrap/Card';
+import { connect } from 'react-redux';
 
-export function ProfileView(props) {
-  const { movies, userProfile, token } = props;
+const mapStateToProps = state => {
+  const { movies } = state;
+  return { movies };
+};
 
-  if (!userProfile) {
-    return null;
+class ProfileView extends React.Component {
+  constructor() {
+    super();
+
+    this.state = {
+      username: null,
+      password: null,
+      email: null,
+      birthday: null,
+      userData: null,
+      favoriteMovies: [],
+      usernameForm: null,
+      passwordForm: null,
+      emailForm: null,
+      birthdayForm: null
+    };
   }
 
-  const { onToggleFavourite } = props;
-
-  const [name, setName] = useState(userProfile.Name);
-  const [username, setUsername] = useState(userProfile.Username);
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState(userProfile.Email);
-  const [birthday, setBirthday] = useState(userProfile.Birthday.substring(0, 10));
-  const [validated, setValidated] = useState(false);
-
-  const formField = (label, value, onChange, type = 'text', feedback, options) => {
-    if (!feedback) {
-      feedback = `Please insert your ${label.toLowerCase()}.`;
+  componentDidMount() {
+    let accessToken = localStorage.getItem('token');
+    if (accessToken !== null) {
+      this.getUser(accessToken);
     }
-    return (
-      <Form.Group controlId={`formBasic${label.trim()}`}>
-        <Form.Label>{label}</Form.Label>
-        <Form.Control
-          type={type}
-          value={value}
-          onChange={e => onChange(e.target.value)}
-          required
-          {...options}
-          placeholder={`Enter ${label.toLowerCase()}`} />
-        <Form.Control.Feedback type="invalid">
-          {feedback}
-        </Form.Control.Feedback>
-      </Form.Group>
-    );
   }
 
-  const handleUpdate = (e) => {
+  getUser(token) {
+    let username = localStorage.getItem('user');
+    let userEndpoint = 'https://horrorapi.herokuapp.com/users/';
+    let url = `${userEndpoint}${username}`;
+    axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(response => {
+        this.setState({
+          userData: response.data,
+          username: response.data.Username,
+          password: response.data.Password,
+          email: response.data.Email,
+          birthday: response.data.Birthday,
+          favoriteMovies: response.data.FavoriteMovies
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
 
-    e.preventDefault();
+  //delete user
+  deleteUser(event) {
+    event.preventDefault();
+    let userEndpoint = 'https://horrorapi.herokuapp.com/users/';
+    let usernameLocal = localStorage.getItem('user');
+    let url = `${userEndpoint}${usernameLocal}`;
+    axios
+      .delete(url, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      })
+      .then(response => {
+        alert('Your account has been delted!');
+        //clears your storage
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        //opens login view
+        window.open('/', '_self');
+      })
+      .catch(event => {
+        alert(event, 'failed to delete user');
+      });
+  }
 
-    if (!token) {
-      // if token is not present, user is not logged in, go home
-      console.log('user is not logged in');
-      window.open('/client', '_self'); // the second argument '_self' is necessary so that the page will open in the current tab
-      return
-    }
+  deleteMovie(event, favoriteMovie) {
+    event.preventDefault();
+    console.log(favoriteMovie);
+    let userEndpoint = 'https://horrorapi.herokuapp.com/users/';
+    let usernameLocal = localStorage.getItem('user');
+    let url = `${userEndpoint}${usernameLocal}/FavoriteMovies/${favoriteMovie}`;
+    axios
+      .delete(url, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      })
+      .then(response => {
+        // update state with current movie data
+        this.getUser(localStorage.getItem('token'));
+      })
+      .catch(event => {
+        alert(event, 'Oops... something went wrong...');
+      });
+  }
 
-    // handles form validation
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.stopPropagation();
+  handleChange(event) {
+    this.setState({ [event.target.name]: event.target.value });
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    let userEndpoint = 'https://horrorapi.herokuapp.com/users/';
+    let usernameLocal = localStorage.getItem('user');
+    let url = `${userEndpoint}${usernameLocal}`;
+    axios
+      .put(
+        url,
+        {
+          Username: this.state.usernameForm,
+          Password: this.state.passwordForm,
+          Email: this.state.emailForm,
+          Birthday: this.state.birthdayForm
+        },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }
+      )
+      .then(response => {
+        console.log(response);
+        alert('Your data has been updated!');
+        //update localStorage
+        localStorage.setItem('user', this.state.usernameForm);
+        // call getUser() to display changed userdata after submission
+        this.getUser(localStorage.getItem('token'));
+        //reset form after submitting data
+        document
+          .getElementsByClassName('changeDataForm')[0]
+          .requestFullscreen();
+      })
+      .catch(event => {
+        console.log(event, 'error updating the userdata');
+        alert('Ooooops... Something went wrong!');
+      });
+  }
+
+  toggleForm() {
+    let form = document.getElementsByClassName('changeDataForm')[0];
+    let toggleButton = document.getElementById('toggleButton');
+
+    form.classList.toggle('show-form');
+    if (form.classList.contains('show-form')) {
+      toggleButton.innerHTML = 'CHANGE DATA &uarr;';
     } else {
-      console.log('user update', username, 'with password', password);
-      // const url_root = 'http://localhost:3000'
-      const url_root = 'https://horrorapi.herokuapp.com'
-      const register_url = `${url_root}/users/${username}`;
+      toggleButton.innerHTML = 'CHANGE DATA &darr;';
+    }
+  }
 
-      let options = {}
-      if (token) {
-        options = {
-          headers: { Authorization: `Bearer ${token}` }
+  render() {
+    const { userData, username, email, birthday, favoriteMovies } = this.state;
+    const { movies } = this.props;
+
+    console.log('fv', favoriteMovies);
+    console.log('log m', movies);
+
+    let filteredFavMovie = [];
+    let filterMoviesByFav = movies.map(m => {
+      for (let i = 0; i < favoriteMovies.length; i++) {
+        const favMov = favoriteMovies[i];
+        if (m._id === favMov) {
+          filteredFavMovie.push(m);
         }
       }
+    });
+    console.log(
+      'TCL: ProfileView -> render -> filteredFavMovie',
+      filteredFavMovie
+    );
 
-      axios.put(register_url, {
-        Name: name,
-        Username: username,
-        Password: password,
-        Email: email,
-        Birthday: birthday
-      }, options)
-        .then(response => {
-          const data = response.data;
-          props.onUserUpdate(data)
-        })
-        .catch(e => {
-          console.log('error updating the user')
-        });
-    }
-    // notify that fields were validated,
-    // therefore feedback can be shown
-    // (otherwise it will appear at page load)
-    setValidated(true);
-  };
+    if (!userData) return null;
 
-  const handleUnregister = (e) => {
+    return (
+      <div className="view">
+        <div className="profile-view">
+          <h2 className="director">User Profile</h2>
+          <hr></hr>
+          <div className="username">
+            <h4 className="label">Name:</h4>
+            <div className="value">{username}</div>
+          </div>
+          <div className="password">
+            <h4 className="label">Password:</h4>
+            <div className="value">********</div>
+          </div>
+          <div className="birthday">
+            <h4 className="label">Birthday</h4>
+            <div className="value">{birthday}</div>
+          </div>
+          <div className="email">
+            <h4 className="label">Email:</h4>
+            <div className="value">{email}</div>
+          </div>
 
-    e.preventDefault();
+          <div className="favorite-movies">
+            <h4 id="fav" className="label">Favorite Movies:</h4>
+            {movies && filteredFavMovie ? (
+              <div className="value">
+                {filteredFavMovie.map(favoriteMovie => (
+                  <div key={favoriteMovie._id}>
+                    {favoriteMovie.Title}
+                    <span
+                      onClick={event =>
+                        this.deleteMovie(event, favoriteMovie._id)
+                      }
+                    >
+                      {' '}
+                      Delete
+                  </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+                <div className="value">No favorites yet</div>
+              )}
+          </div>
 
-    if (!confirm('About to delete profile, are you sure?')) {
-      return;
-    }
+          <Link to={'/'}>
+            <Button className="view-btn" variant="outline-dark" type="button">
+              Back
+          </Button>
+          </Link>
+          <Button
+            className="view-btn"
+            variant="outline-dark"
+            type="button"
+            onClick={event => this.deleteUser(event)}
+          >
+            Delete Account
+        </Button>
 
-    if (!token) {
-      // if token is not present, user is not logged in, go home
-      console.log('user is not logged in');
-      window.open('/client', '_self'); // the second argument '_self' is necessary so that the page will open in the current tab
-      return
-    }
 
-    console.log('unregister user', username);
-    // const url_root = 'http://localhost:3000'
-    const url_root = 'https://horrorapi.herokuapp.com'
-    const unregister_url = `${url_root}/users/${username}`;
+          <Form className="changeDataForm">
+            <h2>Edit Profile Data</h2>
+            <hr></hr>
+            <Form.Group controlId="formBasicUsername">
+              <Form.Label>Your Username</Form.Label>
+              <Form.Control
+                type="text"
+                name="usernameForm"
+                onChange={event => this.handleChange(event)}
+                placeholder="Enter Username"
+              />
+            </Form.Group>
 
-    let options = {}
-    if (token) {
-      options = {
-        headers: { Authorization: `Bearer ${token}` }
-      }
-    }
+            <Form.Group controlId="formBasicPassword">
+              <Form.Label>Your Password</Form.Label>
+              <Form.Control
+                type="text"
+                name="passwordForm"
+                onChange={event => this.handleChange(event)}
+                placeholder="Password"
+              />
+            </Form.Group>
 
-    axios.delete(unregister_url, options)
-      .then(response => {
-        const data = response.data;
-        props.onLoggedIn(null); // logout the user from the current session
-      })
-      .catch(e => {
-        console.log('error unregistering the user', e)
-      });
-  };
+            <Form.Group controlId="formBasicEmail">
+              <Form.Label>Your Email</Form.Label>
+              <Form.Control
+                type="text"
+                name="emailForm"
+                onChange={event => this.handleChange(event)}
+                placeholder="example@email.com"
+              />
+            </Form.Group>
 
-  return (
-    <div className="profile-view">
-      <Row>
-        <Col className="mb-5" xs={11} sm={6} md={6}>
-          <Form noValidate validated={validated} onSubmit={handleUpdate}>
-            {formField('Name', name, setName)}
-            {formField('Username', username, setUsername, 'text', '', { readOnly: true, disabled: true, required: false, value: username })}
-            {formField('Password', password, setPassword, 'password', 'Please provide a password of at least 6 characters.', { minLength: 6 })}
-            {formField('Email', email, setEmail, 'email', 'Please provide a valid email address.')}
-            {formField('Birthday', birthday, setBirthday, 'date', 'Please provide a valid date (e.g. 01/01/1970).')}
+            <Form.Group controlId="formBasicBirthday">
+              <Form.Label>Your Birthday</Form.Label>
+              <Form.Control
+                type="text"
+                name="birthdayForm"
+                onChange={event => this.handleChange(event)}
+                placeholder="example: 01/01/1990"
+              />
+            </Form.Group>
 
-            <Button variant="primary" type="submit">
-              Update
-            </Button>
+            <Button
+              className="change-btn"
+              variant="outline-dark"
+              type="button"
+              onClick={event => this.handleSubmit(event)}
+            >
+              Change
+          </Button>
           </Form>
-        </Col>
-        <Col xs={11} sm={6} md={6} className="text-center">
-          <Form className="p-3 border border-danger rounded" noValidate validated={validated} onSubmit={handleUnregister}>
-            <Form.Label className="mb-3 text-center text-danger">Dangerous Area</Form.Label>
-            <br />
-            <Button variant="danger" type="submit">
-              Unregister
-            </Button>
-          </Form>
-        </Col>
-      </Row>
-      <br />
-      <MoviesList
-        movies={movies}
-        title="Favorite movies"
-        onToggleFavourite={movieId => onToggleFavourite(movieId)}
-        userProfile={userProfile}
-      />
-    </div>
-  );
-};
+        </div>
+      </div>
+    );
+  }
+}
 
-ProfileView.propTypes = {
-  userProfile: PropTypes.shape({
-    _id: PropTypes.string,
-    FavoriteMovies: PropTypes.array,
-    Name: PropTypes.string,
-    Username: PropTypes.string,
-    Password: PropTypes.string,
-    Email: PropTypes.string,
-    Birthday: PropTypes.string
-  }).isRequired,
-  movies: PropTypes.arrayOf(
-    PropTypes.shape({
-      Title: PropTypes.string,
-      ImageUrl: PropTypes.string,
-      Description: PropTypes.string,
-      Genre: PropTypes.exact({
-        _id: PropTypes.string,
-        Name: PropTypes.string,
-        Description: PropTypes.string
-      }),
-      Director: PropTypes.shape({
-        Name: PropTypes.string
-      })
-    })
-  ),
-  token: PropTypes.string.isRequired,
-  onLoggedIn: PropTypes.func.isRequired,
-  onUserUpdate: PropTypes.func.isRequired,
-  onToggleFavourite: PropTypes.func.isRequired
-};
+export default connect(mapStateToProps)(ProfileView);
