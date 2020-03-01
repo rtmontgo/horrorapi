@@ -21,13 +21,13 @@ class ProfileView extends React.Component {
       username: null,
       password: null,
       email: null,
-      birthday: null,
+      birthdate: null,
       userData: null,
       favoriteMovies: [],
       usernameForm: null,
       passwordForm: null,
       emailForm: null,
-      birthdayForm: null
+      birthdateForm: null
     };
   }
 
@@ -52,7 +52,7 @@ class ProfileView extends React.Component {
           username: response.data.Username,
           password: response.data.Password,
           email: response.data.Email,
-          birthday: response.data.Birthday,
+          birthdate: response.data.Birthdate,
           favoriteMovies: response.data.FavoriteMovies
         });
       })
@@ -119,7 +119,7 @@ class ProfileView extends React.Component {
           Username: this.state.usernameForm,
           Password: this.state.passwordForm,
           Email: this.state.emailForm,
-          Birthday: this.state.birthdayForm
+          Birthdate: this.state.birthdateForm
         },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -156,7 +156,7 @@ class ProfileView extends React.Component {
   }
 
   render() {
-    const { userData, username, email, birthday, favoriteMovies } = this.state;
+    const { userData, username, email, birthdate, favoriteMovies } = this.state;
     const { movies } = this.props;
 
     console.log('fv', favoriteMovies);
@@ -192,8 +192,8 @@ class ProfileView extends React.Component {
             <div className="value">********</div>
           </div>
           <div className="birthday">
-            <h4 className="label">Birthday</h4>
-            <div className="value">{birthday}</div>
+            <h4 className="label">Birthdate:</h4>
+            <div className="value">{birthdate}</div>
           </div>
           <div className="email">
             <h4 className="label">Email:</h4>

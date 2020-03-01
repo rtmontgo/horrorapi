@@ -70,7 +70,6 @@ class App extends React.Component {
     this.getMovies(accessToken);
   }
   getMovies(token) {
-    // const url_root = 'http://localhost:3000'
     const url_root = 'https://horrorapi.herokuapp.com'
     const movies_url = `${url_root}/movies`;
     let options = {}
@@ -222,7 +221,7 @@ class App extends React.Component {
           <Route
             path="/directors/:name"
             render={(matchProps) => <DefaultLayout {...matchProps} {...routeProps} component={DirectorView} director={movies.find(m => m.Director.Name === matchProps.match.params.directorName).Director} movies={movies.filter(m => m.Director.Name === matchProps.match.params.directorName)} />} />
-          <Route path="/users/:Username" render={(matchProps) => <DefaultLayout {...matchProps} {...routeProps} component={ProfileView} userProfile={userProfile} movies={movies.filter(m => userProfile && userProfile.FavoriteMovies.includes(m._id))} onUserUpdate={userProfile => this.onUserUpdate(userProfile)} />} />
+          <Route path="/users/:username" render={(matchProps) => <DefaultLayout {...matchProps} {...routeProps} component={ProfileView} userProfile={userProfile} movies={movies.filter(m => userProfile && userProfile.FavoriteMovies.includes(m._id))} onUserUpdate={userProfile => this.onUserUpdate(userProfile)} />} />
         </Switch>
       </Router>
     );
