@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import axios from 'axios';
+import './login-view.scss';
+import '../registration-view/registration-view';
 
 export function LoginView(props) {
   const [username, setUsername] = useState('');
@@ -11,8 +14,8 @@ export function LoginView(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    /* Send a request to the server for authentication */
-    axios.post('https://horrorapi.herokuapp.com/login', {
+    //Send request to server for auth
+    axios.post('https://homeofhorror.herokuapp.com/login', {
       Username: username,
       Password: password
     })
@@ -26,31 +29,24 @@ export function LoginView(props) {
   };
 
   return (
-    <Form>
-      <Form.Group controlId="formBasicUsername">
-        <Form.Label>Username:</Form.Label>
-        <Form.Control type="text" placeholder="Enter username" value={username} onChange={e => setUsername(e.target.value)} />
-      </Form.Group>
-
-      <Form.Group controlId="formBasicPassword">
-        <Form.Label>Password</Form.Label>
-        <Form.Control type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
-      </Form.Group>
-      <Button variant="primary" type="submit" onClick={handleSubmit}>
-        Submit
-        </Button>
-      <Form.Group controlId="formNewUser">
-        <Form.Text className="newUsers">
-          New user? click{' '}
-          <Link to={'/register'}>
-            {' '}
-            <span>Here</span>
-          </Link>{' '}
-          to sign up{' '}
-        </Form.Text>
-      </Form.Group>
-    </Form>
-  )
+    <Container className='login-view'>
+      <h2>Login</h2>
+      <Form>
+        <Form.Group controlId='formUsername'>
+          <Form.Label>Username: </Form.Label>
+          <Form.Control size='sm' type='text' placeholder='Username' value={username} onChange={e => setUsername(e.target.value)} /></Form.Group>
+        <Form.Group controlId='formPassword'>
+          <Form.Label>Password: </Form.Label>
+          <Form.Control size='sm' type="password" placeholder='Password' value={password} onChange={e => setPassword(e.target.value)} />
+        </Form.Group>
+        <Button variant='primary' onClick={handleSubmit}>Submit</Button>
+        <Form.Group controlId='newUser'>
+          <Form.Text>New User? <Link to={`/register`}><Button id='registerButton' variant='link'> Register Now </Button></Link>
+          </Form.Text>
+        </Form.Group>
+      </Form>
+    </Container>
+  );
 }
 
 LoginView.propTypes = {
