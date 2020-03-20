@@ -1,18 +1,19 @@
 import React from 'react';
 import axios from 'axios';
 
-import { connect } from 'react-redux';
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
-import { setMovies } from '../../actions/actions';
+import { setMovies, setUser } from '../../actions/actions';
 
 import MoviesList from '../movies-list/movies-list';
 
+import { connect } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 import { Link } from "react-router-dom";
 
 import { ProfileView } from '../profile-view/profile-view';
+import { ProfileUpdate } from '../profile-view/profile-update';
 import { LoginView } from '../login-view/login-view';
 import { RegistrationView } from '../registration-view/registration-view';
 import { MovieView } from '../movie-view/movie-view';
@@ -24,32 +25,21 @@ export class MainView extends React.Component {
   constructor() {
     //Call the superclass constructor so React can initialize it
     super();
-
-    //Initialize the state to an empty object so we can destructure it later
-    this.state = {
-      movies: [],
-      user: null
-    };
   }
 
   //One of the hooks available in a React Component
   componentDidMount() {
     let accessToken = localStorage.getItem('token');
+    let user = localStorage.getItem('user')
     if (accessToken !== null) {
-      this.setState({
-        user: localStorage.getItem('user')
-      });
+      this.props.setUser(user);
       this.getMovies(accessToken);
-      this.getUser(localStorage.getItem("user"), accessToken);
     }
   }
 
   onLoggedIn(authData) {
-    console.log(authData);
-    this.setState({
-      user: authData.user.Username
-    });
-
+    console.log(authData + ' authData')
+    this.props.setUser(authData.user.Username);
     localStorage.setItem('token', authData.token);
     localStorage.setItem('user', authData.user.Username);
     this.getMovies(authData.token);
@@ -80,32 +70,25 @@ export class MainView extends React.Component {
       });
   }
 
-  onButtonClick() {
-    this.setState({
-      selectedMovie: null
-    });
-  }
+  // onButtonClick(view) {
+  //   this.setState({
+  //     selectedMovie: null
+  //   });
+  // }
 
   onLogout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    this.setState({
-      user: null
-    })
+    localStorage.clear();
     window.open('/client', '_self');
+    this.props.setUser(user);
   }
 
-  onSignedIn(user) {
-    this.setState({
-      user: user,
-    });
-  }
+
 
   render() {
     //if the state isn't initialized, this will throw on runtime
     //before the data is initially loaded
-    let { movies } = this.props;
-    let { user } = this.state;
+    let { movies, user } = this.props;
+
 
     //before the movies has been loaded
     if (!movies) return <div className="main-view" />;
@@ -153,10 +136,6 @@ export class MainView extends React.Component {
           <Route path="/users/:Username" render={({ match }) => { return <ProfileView movies={movies} /> }
           } />
 
-          <Route path="/users/:Username" render={() => <ProfileUpdate />
-          }
-          />
-
         </div>
       </Router >
     );
@@ -164,7 +143,7 @@ export class MainView extends React.Component {
 }
 
 let mapStateToProps = state => {
-  return { movies: state.movies }
+  return { movies: state.movies, user: state.user }
 }
 
-export default connect(mapStateToProps, { setMovies })(MainView);
+export default connect(mapStateToProps, { setMovies, setUser })(MainView);
