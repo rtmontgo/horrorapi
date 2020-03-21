@@ -6,12 +6,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Form from 'react-bootstrap/Form';
 //import Card from 'react-bootstrap/Card';
-import { connect } from 'react-redux';
 
-const mapStateToProps = state => {
-  const { movies } = state;
-  return { movies };
-};
 
 class ProfileView extends React.Component {
   constructor() {
@@ -296,4 +291,4 @@ class ProfileView extends React.Component {
   }
 }
 
-export default connect(mapStateToProps)(ProfileView);
+export default ProfileView;

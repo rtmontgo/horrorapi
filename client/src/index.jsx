@@ -1,31 +1,29 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
-import devToolsEnhancer from 'remote-redux-devtools';
 import { Provider } from 'react-redux';
 
+import MainView from './components/main-view/main-view';
 import moviesApp from './reducers/reducers';
 
-// Import statement to indicate that you need to bundle `./index.scss`
+//Import statement to indicate that you need to bundle ./index.scss`
 import './index.scss';
 
-const store = createStore(reducer, moviesApp, devToolsEnhancer({ realtime: true }));
+const store = createStore(moviesApp);
 
-import App from './app.jsx'
-
-// Main component (will eventually use all the others)
-class HorrorApiApplication extends React.Component {
+//Main component (will eventually use all the others)
+class MyFlixApplication extends React.Component {
   render() {
     return (
       <Provider store={store}>
-        <App />
+        <MainView />
       </Provider>
     );
   }
 }
 
-// Finds the root of your app
+//Finds the root of your app
 const container = document.getElementsByClassName('app-container')[0];
 
-// Tells React to render your app in the root DOM element
-ReactDOM.render(React.createElement(HorrorApiApplication), container);
+//Tells React to render your app in the root DOM element
+ReactDOM.render(React.createElement(MyFlixApplication), container);

@@ -5,19 +5,16 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import './movie-view.scss';
 import axios from 'axios';
-import { connect } from 'react-redux';
 
-function MovieView(props) {
-  const { movies, movieId } = props;
+export function MovieView(props) {
 
-  if (!movies || !movies.length) return null;
-
-  const movie = movies.find(movie => movie._id == movieId);
+  const { movie } = props;
+  if (!movie) return null;
 
   function handleSubmit(event) {
     event.preventDefault();
     axios
-      .post(`https://homeofhorror.herokuapp.com/users/${localStorage.getItem('user')}/movies/${movie._id}`, {
+      .post(`https://horrorapi.herokuapp.com/users/${localStorage.getItem('user')}/movies/${movie._id}`, {
         Username: localStorage.getItem('user')
       },
         {
@@ -45,7 +42,7 @@ function MovieView(props) {
           <Card.Text>
             Description: {movie.Genre.Description}</Card.Text>
           <Card.Text>Director:
-            <Link to={`/directors/${movie.Director.Name}`}><Button variant="link">{movie.Director.Name}</Button></Link>
+          <Link to={`/directors/${movie.Director.Name}`}><Button variant="link">{movie.Director.Name}</Button></Link>
           </Card.Text>
           <Card.Text>Bio: {movie.Director.Bio}</Card.Text>
         </Card.Body>
@@ -57,4 +54,19 @@ function MovieView(props) {
   );
 }
 
-export default connect(({ movies }) => ({ movies }))(MovieView);
+MovieView.propTypes = {
+  movie: PropTypes.shape({
+    Title: PropTypes.string,
+    Name: PropTypes.string,
+    ImageUrl: PropTypes.string,
+    Description: PropTypes.string,
+    Genre: PropTypes.shape({
+      Name: PropTypes.string,
+      Description: PropTypes.string
+    }),
+    Director: PropTypes.shape({
+      Name: PropTypes.string,
+      Bio: PropTypes.string
+    })
+  })
+};
