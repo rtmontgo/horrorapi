@@ -2,6 +2,8 @@ const express = require('express');
 morgan = require('morgan');
 bodyParser = require('body-parser');
 uuid = require('uuid');
+cors = require('cors');
+let allowedOrigins = ['*'];
 
 const path = require("path");
 
@@ -21,6 +23,7 @@ mongoose.connect('mongodb+srv://rtmontgo:Zombie3!@tmont-3jagp.mongodb.net/horror
 
 app.use(morgan('common'));
 app.use(bodyParser.json());
+app.use(cors());
 app.use(express.static('public'));
 app.use("/client", express.static(path.join(__dirname, "client", "dist")));
 app.get("/client/*", (req, res) => {
