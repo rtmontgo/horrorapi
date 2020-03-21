@@ -45,7 +45,7 @@ export class MainView extends React.Component {
   }
 
   getMovies(token) {
-    axios.get('https://homeofhorror.herokuapp.com/movies', {
+    axios.get('https://horrorapi.herokuapp.com/movies', {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(response => {
@@ -58,7 +58,7 @@ export class MainView extends React.Component {
 
   getUser(token) {
     axios
-      .get('https://homeofhorror.herokuapp.com/users/', {
+      .get('https://horrorapi.herokuapp.com/users/', {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(response => {
