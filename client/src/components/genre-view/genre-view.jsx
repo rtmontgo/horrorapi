@@ -1,16 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 import { Link } from "react-router-dom";
+import PropTypes from 'prop-types';
 import './genre-view.scss';
 
-function GenreView(props) {
-  const { movies, genreName } = props;
+import { MovieCard } from '../movie-card/movie-card';
 
-  if (!movies || !movies.length) return null;
+export const GenreView = (props) => {
 
-  const genre = movies.find(movie => movie.Genre.Name === genreName);
+  // if (!genre) return null;
+  const { genre } = props;
 
   return (
     <div className="genre-view">
@@ -28,4 +27,24 @@ function GenreView(props) {
   );
 }
 
-export default connect(({ movies }) => ({ movies }))(GenreView);
+// GenreView.propTypes = {
+// genre: PropTypes.exact({
+// Name: PropTypes.string,
+// Description: PropTypes.string
+// }),
+// movie: PropTypes.arrayOf(
+// PropTypes.shape({
+// Title: PropTypes.string,
+// ImageUrl: PropTypes.string,
+// Description: PropTypes.string,
+// Genre: PropTypes.exact({
+// Name: PropTypes.string,
+// Description: PropTypes.string
+// }),
+// Director: PropTypes.shape({
+// Name: PropTypes.string,
+// Bio: PropTypes.string
+// })
+// })
+// )
+// };
