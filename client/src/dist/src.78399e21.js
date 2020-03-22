@@ -38244,6 +38244,9 @@ function (_React$Component) {
           birthdate: response.data.Birthdate,
           favoriteMovies: response.data.FavoriteMovies
         });
+
+        console.log(_this2.state.favoriteMovies);
+        console.log(_this2.props.movies);
       }).catch(function (error) {
         console.error(error);
       });
@@ -38284,7 +38287,7 @@ function (_React$Component) {
         }
       }).then(function (response) {
         // update state with current movie data
-        _this3.getUserInfo(localStorage.getItem('user'), localStorage.getItem('token'));
+        _this3.getUser(localStorage.getItem('user'), localStorage.getItem('token'));
       }).catch(function (event) {
         alert(event, 'Oops... something went wrong...');
       });
@@ -38337,6 +38340,9 @@ function (_React$Component) {
           birthdate = _this$state.birthdate,
           favoriteMovies = _this$state.favoriteMovies;
       var movies = this.props.movies;
+      var favoriteMoviesList = movies.filter(function (movie) {
+        return _this5.state.favoriteMovies.includes(movie._id);
+      });
       if (!userData) return null;
       return _react.default.createElement("div", {
         className: "view"
@@ -38373,25 +38379,17 @@ function (_React$Component) {
       }, _react.default.createElement("h4", {
         id: "fav",
         className: "label"
-      }, "Favorite Movies:"), favoriteMovies.length === 0 && _react.default.createElement("div", {
-        className: "value"
-      }, "No Favorites Yet...."), favoriteMovies.length > 0 && _react.default.createElement("div", {
-        className: "value favorite-movies"
-      }, favoriteMovies.map(function (favoriteMovie) {
-        return _react.default.createElement("div", {
-          className: "movie-image",
-          key: favoriteMovie
-        }, _react.default.createElement("img", {
-          src: JSON.parse(localStorage.getItem('movies')).find(function (movie) {
-            return movie._id === favoriteMovie;
-          }).ImagePath,
-          alt: "Movie Cover"
-        }), _react.default.createElement("span", {
-          onClick: function onClick(event) {
-            return _this5.deleteMovie(event, favoriteMovie);
+      }, "Favorite Movies:"), favoriteMovies ? favoriteMoviesList.map(function (movie) {
+        return _react.default.createElement("div", null, _react.default.createElement("p", {
+          key: movie._id
+        }, movie.Title), _react.default.createElement(_Button.default, {
+          variant: "danger",
+          size: "sm",
+          onClick: function onClick(e) {
+            return _this5.deleteMovie(e, movie._id);
           }
-        }, " Delete"));
-      }))), _react.default.createElement(_reactRouterDom.Link, {
+        }, "Remove "));
+      }) : _react.default.createElement("p", null, "No favorites yet.")), _react.default.createElement(_reactRouterDom.Link, {
         to: '/'
       }, _react.default.createElement(_Button.default, {
         className: "view-btn",
@@ -39352,7 +39350,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51583" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54112" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

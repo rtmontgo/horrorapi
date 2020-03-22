@@ -45,6 +45,8 @@ export class ProfileView extends React.Component {
           birthdate: response.data.Birthdate,
           favoriteMovies: response.data.FavoriteMovies
         })
+        console.log(this.state.favoriteMovies);
+        console.log(this.props.movies);
       })
       .catch(error => {
         console.error(error);
@@ -81,7 +83,7 @@ export class ProfileView extends React.Component {
       })
       .then(response => {
         // update state with current movie data
-        this.getUserInfo(localStorage.getItem('user'), localStorage.getItem('token'));
+        this.getUser(localStorage.getItem('user'), localStorage.getItem('token'));
       })
       .catch(event => {
         alert(event, 'Oops... something went wrong...');
@@ -128,6 +130,7 @@ export class ProfileView extends React.Component {
   render() {
     const { userData, username, email, birthdate, favoriteMovies } = this.state;
     const { movies } = this.props;
+    const favoriteMoviesList = movies.filter(movie => this.state.favoriteMovies.includes(movie._id));
     if (!userData) return null;
 
     return (
@@ -154,12 +157,17 @@ export class ProfileView extends React.Component {
 
           <div className="favorite-movies">
             <h4 id="fav" className="label">Favorite Movies:</h4>
-            {favoriteMovies.length === 0 &&
-              <div className="value">No Favorites Yet....</div>
+            {
+              favoriteMovies ? favoriteMoviesList.map(movie => (
+                <div>
+                  <p key={movie._id}>
+                    {movie.Title}
+                  </p>
+                  <Button variant='danger' size='sm' onClick={e => this.deleteMovie(e, movie._id)}>Remove </Button>
+                </div>
+              )) : <p>No favorites yet.</p>
             }
-            {favoriteMovies.length > 0 &&
-              <div className="value favorite-movies">{favoriteMovies.map(favoriteMovie => (<div className="movie-image" key={favoriteMovie}><img src={JSON.parse(localStorage.getItem('movies')).find(movie => movie._id === favoriteMovie).ImagePath} alt="Movie Cover" /><span onClick={(event) => this.deleteMovie(event, favoriteMovie)}> Delete</span></div>))}</div>
-            }
+
           </div>
 
           <Link to={'/'}>
