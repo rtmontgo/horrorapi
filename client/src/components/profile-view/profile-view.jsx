@@ -7,8 +7,7 @@ import axios from 'axios';
 import Form from 'react-bootstrap/Form';
 //import Card from 'react-bootstrap/Card';
 
-
-class ProfileView extends React.Component {
+export class ProfileView extends React.Component {
   constructor() {
     super();
 
@@ -29,18 +28,14 @@ class ProfileView extends React.Component {
   componentDidMount() {
     let accessToken = localStorage.getItem('token');
     if (accessToken !== null) {
-      this.getUser(accessToken);
+      this.getUser(localStorage.getItem('user'), accessToken);
     }
   }
 
-  getUser(token) {
-    let username = localStorage.getItem('user');
-    let userEndpoint = 'https://horrorapi.herokuapp.com/users/';
-    let url = `${userEndpoint}${username}`;
-    axios
-      .get(url, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+  getUser(user, token) {
+    axios.get(`https://horrorapi.herokuapp.com/users/${user}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
       .then(response => {
         this.setState({
           userData: response.data,
@@ -49,25 +44,23 @@ class ProfileView extends React.Component {
           email: response.data.Email,
           birthdate: response.data.Birthdate,
           favoriteMovies: response.data.FavoriteMovies
-        });
+        })
       })
-      .catch(function (error) {
-        console.log(error);
+      .catch(error => {
+        console.error(error);
       });
   }
 
   //delete user
   deleteUser(event) {
     event.preventDefault();
-    let userEndpoint = 'https://horrorapi.herokuapp.com/users/';
-    let usernameLocal = localStorage.getItem('user');
-    let url = `${userEndpoint}${usernameLocal}`;
     axios
-      .delete(url, {
+      .delete(`https://horrorapi.herokuapp.com/update/${localStorage.getItem('user')}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       })
       .then(response => {
-        alert('Your account has been delted!');
+        console.log('user deleted')
+        alert('Your account has been deleted!');
         //clears your storage
         localStorage.removeItem('token');
         localStorage.removeItem('user');
@@ -82,16 +75,13 @@ class ProfileView extends React.Component {
   deleteMovie(event, favoriteMovie) {
     event.preventDefault();
     console.log(favoriteMovie);
-    let userEndpoint = 'https://horrorapi.herokuapp.com/users/';
-    let usernameLocal = localStorage.getItem('user');
-    let url = `${userEndpoint}${usernameLocal}/FavoriteMovies/${favoriteMovie}`;
     axios
-      .delete(url, {
+      .delete(`https://horrorapi.herokuapp.com/users/${localStorage.getItem('user')}/movies/${favoriteMovie}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       })
       .then(response => {
         // update state with current movie data
-        this.getUser(localStorage.getItem('token'));
+        this.getUserInfo(localStorage.getItem('user'), localStorage.getItem('token'));
       })
       .catch(event => {
         alert(event, 'Oops... something went wrong...');
@@ -102,19 +92,19 @@ class ProfileView extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
   }
 
+  // update user handler
+
   handleSubmit(event) {
     event.preventDefault();
-    let userEndpoint = 'https://horrorapi.herokuapp.com/users/';
-    let usernameLocal = localStorage.getItem('user');
-    let url = `${userEndpoint}${usernameLocal}`;
+
     axios
-      .put(
-        url,
+      .put(`https://horrorapi.herokuapp.com/update/${localStorage.getItem('user')}`,
+
         {
           Username: this.state.usernameForm,
           Password: this.state.passwordForm,
           Email: this.state.emailForm,
-          Birthdate: this.state.birthdateForm
+          Birthday: this.state.birthdayForm
         },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -125,12 +115,9 @@ class ProfileView extends React.Component {
         alert('Your data has been updated!');
         //update localStorage
         localStorage.setItem('user', this.state.usernameForm);
-        // call getUser() to display changed userdata after submission
-        this.getUser(localStorage.getItem('token'));
-        //reset form after submitting data
-        document
-          .getElementsByClassName('changeDataForm')[0]
-          .requestFullscreen();
+        // call getUser() to dusplay changed userdata after submission
+        this.getUser(localStorage.getItem('user'), localStorage.getItem('token'));
+        document.getElementsByClassName('changeDataForm')[0].reset();
       })
       .catch(event => {
         console.log(event, 'error updating the userdata');
@@ -138,39 +125,9 @@ class ProfileView extends React.Component {
       });
   }
 
-  toggleForm() {
-    let form = document.getElementsByClassName('changeDataForm')[0];
-    let toggleButton = document.getElementById('toggleButton');
-
-    form.classList.toggle('show-form');
-    if (form.classList.contains('show-form')) {
-      toggleButton.innerHTML = 'CHANGE DATA &uarr;';
-    } else {
-      toggleButton.innerHTML = 'CHANGE DATA &darr;';
-    }
-  }
-
   render() {
     const { userData, username, email, birthdate, favoriteMovies } = this.state;
     const { movies } = this.props;
-
-    console.log('fv', favoriteMovies);
-    console.log('log m', movies);
-
-    let filteredFavMovie = [];
-    let filterMoviesByFav = movies.map(m => {
-      for (let i = 0; i < favoriteMovies.length; i++) {
-        const favMov = favoriteMovies[i];
-        if (m._id === favMov) {
-          filteredFavMovie.push(m);
-        }
-      }
-    });
-    console.log(
-      'TCL: ProfileView -> render -> filteredFavMovie',
-      filteredFavMovie
-    );
-
     if (!userData) return null;
 
     return (
@@ -197,25 +154,12 @@ class ProfileView extends React.Component {
 
           <div className="favorite-movies">
             <h4 id="fav" className="label">Favorite Movies:</h4>
-            {movies && filteredFavMovie ? (
-              <div className="value">
-                {filteredFavMovie.map(favoriteMovie => (
-                  <div key={favoriteMovie._id}>
-                    {favoriteMovie.Title}
-                    <span
-                      onClick={event =>
-                        this.deleteMovie(event, favoriteMovie._id)
-                      }
-                    >
-                      {' '}
-                      Delete
-                  </span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-                <div className="value">No favorites yet</div>
-              )}
+            {favoriteMovies.length === 0 &&
+              <div className="value">No Favorites Yet....</div>
+            }
+            {favoriteMovies.length > 0 &&
+              <div className="value favorite-movies">{favoriteMovies.map(favoriteMovie => (<div className="movie-image" key={favoriteMovie}><img src={JSON.parse(localStorage.getItem('movies')).find(movie => movie._id === favoriteMovie).ImagePath} alt="Movie Cover" /><span onClick={(event) => this.deleteMovie(event, favoriteMovie)}> Delete</span></div>))}</div>
+            }
           </div>
 
           <Link to={'/'}>
@@ -249,7 +193,7 @@ class ProfileView extends React.Component {
             <Form.Group controlId="formBasicPassword">
               <Form.Label>Your Password</Form.Label>
               <Form.Control
-                type="text"
+                type="password"
                 name="passwordForm"
                 onChange={event => this.handleChange(event)}
                 placeholder="Password"
@@ -291,4 +235,3 @@ class ProfileView extends React.Component {
   }
 }
 
-export default ProfileView;

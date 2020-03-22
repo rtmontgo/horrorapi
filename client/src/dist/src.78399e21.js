@@ -38154,7 +38154,7 @@ module.hot.accept(reloadCSS);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports.ProfileView = void 0;
 
 var _react = _interopRequireDefault(require("react"));
 
@@ -38223,19 +38223,15 @@ function (_React$Component) {
       var accessToken = localStorage.getItem('token');
 
       if (accessToken !== null) {
-        this.getUser(accessToken);
+        this.getUser(localStorage.getItem('user'), accessToken);
       }
     }
   }, {
     key: "getUser",
-    value: function getUser(token) {
+    value: function getUser(user, token) {
       var _this2 = this;
 
-      var username = localStorage.getItem('user');
-      var userEndpoint = 'https://horrorapi.herokuapp.com/users/';
-      var url = "".concat(userEndpoint).concat(username);
-
-      _axios.default.get(url, {
+      _axios.default.get("https://horrorapi.herokuapp.com/users/".concat(user), {
         headers: {
           Authorization: "Bearer ".concat(token)
         }
@@ -38249,7 +38245,7 @@ function (_React$Component) {
           favoriteMovies: response.data.FavoriteMovies
         });
       }).catch(function (error) {
-        console.log(error);
+        console.error(error);
       });
     } //delete user
 
@@ -38257,16 +38253,14 @@ function (_React$Component) {
     key: "deleteUser",
     value: function deleteUser(event) {
       event.preventDefault();
-      var userEndpoint = 'https://horrorapi.herokuapp.com/users/';
-      var usernameLocal = localStorage.getItem('user');
-      var url = "".concat(userEndpoint).concat(usernameLocal);
 
-      _axios.default.delete(url, {
+      _axios.default.delete("https://horrorapi.herokuapp.com/update/".concat(localStorage.getItem('user')), {
         headers: {
           Authorization: "Bearer ".concat(localStorage.getItem('token'))
         }
       }).then(function (response) {
-        alert('Your account has been delted!'); //clears your storage
+        console.log('user deleted');
+        alert('Your account has been deleted!'); //clears your storage
 
         localStorage.removeItem('token');
         localStorage.removeItem('user'); //opens login view
@@ -38283,17 +38277,14 @@ function (_React$Component) {
 
       event.preventDefault();
       console.log(favoriteMovie);
-      var userEndpoint = 'https://horrorapi.herokuapp.com/users/';
-      var usernameLocal = localStorage.getItem('user');
-      var url = "".concat(userEndpoint).concat(usernameLocal, "/FavoriteMovies/").concat(favoriteMovie);
 
-      _axios.default.delete(url, {
+      _axios.default.delete("https://horrorapi.herokuapp.com/users/".concat(localStorage.getItem('user'), "/movies/").concat(favoriteMovie), {
         headers: {
           Authorization: "Bearer ".concat(localStorage.getItem('token'))
         }
       }).then(function (response) {
         // update state with current movie data
-        _this3.getUser(localStorage.getItem('token'));
+        _this3.getUserInfo(localStorage.getItem('user'), localStorage.getItem('token'));
       }).catch(function (event) {
         alert(event, 'Oops... something went wrong...');
       });
@@ -38302,22 +38293,20 @@ function (_React$Component) {
     key: "handleChange",
     value: function handleChange(event) {
       this.setState(_defineProperty({}, event.target.name, event.target.value));
-    }
+    } // update user handler
+
   }, {
     key: "handleSubmit",
     value: function handleSubmit(event) {
       var _this4 = this;
 
       event.preventDefault();
-      var userEndpoint = 'https://horrorapi.herokuapp.com/users/';
-      var usernameLocal = localStorage.getItem('user');
-      var url = "".concat(userEndpoint).concat(usernameLocal);
 
-      _axios.default.put(url, {
+      _axios.default.put("https://horrorapi.herokuapp.com/update/".concat(localStorage.getItem('user')), {
         Username: this.state.usernameForm,
         Password: this.state.passwordForm,
         Email: this.state.emailForm,
-        Birthdate: this.state.birthdateForm
+        Birthday: this.state.birthdayForm
       }, {
         headers: {
           Authorization: "Bearer ".concat(localStorage.getItem('token'))
@@ -38326,29 +38315,15 @@ function (_React$Component) {
         console.log(response);
         alert('Your data has been updated!'); //update localStorage
 
-        localStorage.setItem('user', _this4.state.usernameForm); // call getUser() to display changed userdata after submission
+        localStorage.setItem('user', _this4.state.usernameForm); // call getUser() to dusplay changed userdata after submission
 
-        _this4.getUser(localStorage.getItem('token')); //reset form after submitting data
+        _this4.getUser(localStorage.getItem('user'), localStorage.getItem('token'));
 
-
-        document.getElementsByClassName('changeDataForm')[0].requestFullscreen();
+        document.getElementsByClassName('changeDataForm')[0].reset();
       }).catch(function (event) {
         console.log(event, 'error updating the userdata');
         alert('Ooooops... Something went wrong!');
       });
-    }
-  }, {
-    key: "toggleForm",
-    value: function toggleForm() {
-      var form = document.getElementsByClassName('changeDataForm')[0];
-      var toggleButton = document.getElementById('toggleButton');
-      form.classList.toggle('show-form');
-
-      if (form.classList.contains('show-form')) {
-        toggleButton.innerHTML = 'CHANGE DATA &uarr;';
-      } else {
-        toggleButton.innerHTML = 'CHANGE DATA &darr;';
-      }
     }
   }, {
     key: "render",
@@ -38362,19 +38337,6 @@ function (_React$Component) {
           birthdate = _this$state.birthdate,
           favoriteMovies = _this$state.favoriteMovies;
       var movies = this.props.movies;
-      console.log('fv', favoriteMovies);
-      console.log('log m', movies);
-      var filteredFavMovie = [];
-      var filterMoviesByFav = movies.map(function (m) {
-        for (var i = 0; i < favoriteMovies.length; i++) {
-          var favMov = favoriteMovies[i];
-
-          if (m._id === favMov) {
-            filteredFavMovie.push(m);
-          }
-        }
-      });
-      console.log('TCL: ProfileView -> render -> filteredFavMovie', filteredFavMovie);
       if (!userData) return null;
       return _react.default.createElement("div", {
         className: "view"
@@ -38411,19 +38373,25 @@ function (_React$Component) {
       }, _react.default.createElement("h4", {
         id: "fav",
         className: "label"
-      }, "Favorite Movies:"), movies && filteredFavMovie ? _react.default.createElement("div", {
+      }, "Favorite Movies:"), favoriteMovies.length === 0 && _react.default.createElement("div", {
         className: "value"
-      }, filteredFavMovie.map(function (favoriteMovie) {
+      }, "No Favorites Yet...."), favoriteMovies.length > 0 && _react.default.createElement("div", {
+        className: "value favorite-movies"
+      }, favoriteMovies.map(function (favoriteMovie) {
         return _react.default.createElement("div", {
-          key: favoriteMovie._id
-        }, favoriteMovie.Title, _react.default.createElement("span", {
+          className: "movie-image",
+          key: favoriteMovie
+        }, _react.default.createElement("img", {
+          src: JSON.parse(localStorage.getItem('movies')).find(function (movie) {
+            return movie._id === favoriteMovie;
+          }).ImagePath,
+          alt: "Movie Cover"
+        }), _react.default.createElement("span", {
           onClick: function onClick(event) {
-            return _this5.deleteMovie(event, favoriteMovie._id);
+            return _this5.deleteMovie(event, favoriteMovie);
           }
-        }, ' ', "Delete"));
-      })) : _react.default.createElement("div", {
-        className: "value"
-      }, "No favorites yet")), _react.default.createElement(_reactRouterDom.Link, {
+        }, " Delete"));
+      }))), _react.default.createElement(_reactRouterDom.Link, {
         to: '/'
       }, _react.default.createElement(_Button.default, {
         className: "view-btn",
@@ -38450,7 +38418,7 @@ function (_React$Component) {
       })), _react.default.createElement(_Form.default.Group, {
         controlId: "formBasicPassword"
       }, _react.default.createElement(_Form.default.Label, null, "Your Password"), _react.default.createElement(_Form.default.Control, {
-        type: "text",
+        type: "password",
         name: "passwordForm",
         onChange: function onChange(event) {
           return _this5.handleChange(event);
@@ -38488,8 +38456,7 @@ function (_React$Component) {
   return ProfileView;
 }(_react.default.Component);
 
-var _default = ProfileView;
-exports.default = _default;
+exports.ProfileView = ProfileView;
 },{"react":"node_modules/react/index.js","react-bootstrap/Button":"node_modules/react-bootstrap/esm/Button.js","./profile-view.scss":"components/profile-view/profile-view.scss","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","axios":"node_modules/axios/index.js","react-bootstrap/Form":"node_modules/react-bootstrap/esm/Form.js"}],"components/login-view/login-view.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
@@ -38510,13 +38477,15 @@ exports.RegistrationView = RegistrationView;
 
 var _react = _interopRequireWildcard(require("react"));
 
+var _axios = _interopRequireDefault(require("axios"));
+
+var _Container = _interopRequireDefault(require("react-bootstrap/Container"));
+
 var _Form = _interopRequireDefault(require("react-bootstrap/Form"));
 
 var _Button = _interopRequireDefault(require("react-bootstrap/Button"));
 
 require("./registration-view.scss");
-
-var _axios = _interopRequireDefault(require("axios"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -38553,12 +38522,10 @@ function RegistrationView(props) {
       birthdate = _useState8[0],
       setBirthdate = _useState8[1];
 
-  var handleSubmit = function handleSubmit(e) {
+  var handleRegister = function handleRegister(e) {
     e.preventDefault();
-    var userEndpoint = 'https://horrorapi.herokuapp.com/users/';
-    /* Send a request to the server for authentication */
 
-    _axios.default.post(userEndpoint, {
+    _axios.default.post('https://horrorapi.herokuapp.com/users', {
       Username: username,
       Password: password,
       Email: email,
@@ -38566,13 +38533,13 @@ function RegistrationView(props) {
     }).then(function (response) {
       var data = response.data;
       console.log(data);
-      window.open('/', '_self');
-    }).catch(function (err) {
-      console.error('user already exists: ', err);
+      window.open('/client', '_self'); // the second argument '_self' is necessary so that the page will open in the current tab
+    }).catch(function (e) {
+      console.log('error registering the user');
     });
   };
 
-  return _react.default.createElement(Container, {
+  return _react.default.createElement(_Container.default, {
     className: "regContainer"
   }, _react.default.createElement(_Form.default, {
     className: "regForm"
@@ -38617,7 +38584,7 @@ function RegistrationView(props) {
     onClick: handleRegister
   }, "Submit Registration")));
 }
-},{"react":"node_modules/react/index.js","react-bootstrap/Form":"node_modules/react-bootstrap/esm/Form.js","react-bootstrap/Button":"node_modules/react-bootstrap/esm/Button.js","./registration-view.scss":"components/registration-view/registration-view.scss","axios":"node_modules/axios/index.js"}],"components/login-view/login-view.jsx":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","axios":"node_modules/axios/index.js","react-bootstrap/Container":"node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Form":"node_modules/react-bootstrap/esm/Form.js","react-bootstrap/Button":"node_modules/react-bootstrap/esm/Button.js","./registration-view.scss":"components/registration-view/registration-view.scss"}],"components/login-view/login-view.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -39385,7 +39352,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55546" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51583" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
