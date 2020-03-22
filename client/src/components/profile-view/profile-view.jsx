@@ -86,7 +86,7 @@ export class ProfileView extends React.Component {
         this.getUser(localStorage.getItem('user'), localStorage.getItem('token'));
       })
       .catch(event => {
-        alert(event, 'Oops... something went wrong...');
+        alert(event, 'something went wrong...');
       });
   }
 
@@ -113,17 +113,16 @@ export class ProfileView extends React.Component {
         }
       )
       .then(response => {
-        console.log(response);
         alert('Your data has been updated!');
-        //update localStorage
         localStorage.setItem('user', this.state.usernameForm);
-        // call getUser() to dusplay changed userdata after submission
+        // call getUser() 
         this.getUser(localStorage.getItem('user'), localStorage.getItem('token'));
+        //Reset Form
         document.getElementsByClassName('changeDataForm')[0].reset();
       })
       .catch(event => {
-        console.log(event, 'error updating the userdata');
-        alert('Ooooops... Something went wrong!');
+
+        alert('Something went wrong!');
       });
   }
 

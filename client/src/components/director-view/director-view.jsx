@@ -14,8 +14,7 @@ export class DirectorView extends React.Component {
   render() {
     const { director } = this.props;
 
-    // if (!director) return 'no director found';
-    // if (!director.DeathYear) return "present";
+
 
     return (
       <Card className="director-card" style={{ width: '16rem' }}>
