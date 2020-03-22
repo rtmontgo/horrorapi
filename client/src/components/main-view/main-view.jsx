@@ -69,11 +69,6 @@ export class MainView extends React.Component {
       });
   }
 
-  // onButtonClick(view) {
-  //   this.setState({
-  //     selectedMovie: null
-  //   });
-  // }
 
   onLogout() {
     localStorage.clear();

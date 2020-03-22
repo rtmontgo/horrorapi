@@ -4,11 +4,11 @@ import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 import './genre-view.scss';
 
-import { MovieCard } from '../movie-card/movie-card';
+
 
 export const GenreView = (props) => {
 
-  // if (!genre) return null;
+
   const { genre } = props;
 
   return (
@@ -26,25 +26,3 @@ export const GenreView = (props) => {
     </div>
   );
 }
-
-// GenreView.propTypes = {
-// genre: PropTypes.exact({
-// Name: PropTypes.string,
-// Description: PropTypes.string
-// }),
-// movie: PropTypes.arrayOf(
-// PropTypes.shape({
-// Title: PropTypes.string,
-// ImageUrl: PropTypes.string,
-// Description: PropTypes.string,
-// Genre: PropTypes.exact({
-// Name: PropTypes.string,
-// Description: PropTypes.string
-// }),
-// Director: PropTypes.shape({
-// Name: PropTypes.string,
-// Bio: PropTypes.string
-// })
-// })
-// )
-// };
