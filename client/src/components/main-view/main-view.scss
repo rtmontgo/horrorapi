@@ -8,10 +8,8 @@
   display: flex;
 }
 
-header.button{
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 95%;
+.navigation.button{
+  float: right;
 }
 
 h1 {
