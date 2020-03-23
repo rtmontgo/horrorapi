@@ -127,7 +127,7 @@ export class ProfileView extends React.Component {
   }
 
   render() {
-    const { userData, username, email, birthdate, favoriteMovies } = this.state;
+    const { userData, username, email, birthday, favoriteMovies } = this.state;
     const { movies } = this.props;
     const favoriteMoviesList = movies.filter(movie => this.state.favoriteMovies.includes(movie._id));
     if (!userData) return null;
@@ -147,7 +147,7 @@ export class ProfileView extends React.Component {
           </div>
           <div className="birthday">
             <h4 className="label">Birthdate:</h4>
-            <div className="value">{birthdate}</div>
+            <div className="value">{birthday}</div>
           </div>
           <div className="email">
             <h4 className="label">Email:</h4>
