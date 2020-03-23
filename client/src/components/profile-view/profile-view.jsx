@@ -135,7 +135,7 @@ export class ProfileView extends React.Component {
     return (
       <div className="view">
         <div className="profile-view">
-          <h2 className="director">User Profile</h2>
+          <h2 className="title">User Profile</h2>
           <hr></hr>
           <div className="username">
             <h4 className="label">Name:</h4>

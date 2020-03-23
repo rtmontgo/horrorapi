@@ -2,53 +2,23 @@
   box-sizing: border-box;
 }
 
-.update-form {
-  justify-content: center;
-  margin: auto;
-  font-family: 'Merriweather', sans-serif;
-  border: 1px solid rgba(0,0,0,.125);
-  border-radius: .25rem;
-  padding:20px;
-  width:50%;
-}
-
-.profile-view{
+.view {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Merriweather', sans-serif;
 }
 
-div.profile-title{
+.view-btn {
+  width: 33%;
+}
+
+div.title{
   text-align: center;
   font-weight: bold;
 }
 
-.btn-register, .btn-delete{
-  margin: 10px;
-}
-
-.edit-btn {
-  margin-left: 15rem;
-}
-.card-img-top.profile-logo{
-    width: 30%;
-  }
-
 .row{
   margin-top:10px;
-}
-
-p.favouriteMovies{
-  display: inline;
-}
-
-img.update-img{
-  padding:10px;
-}
-
-p.update-title{
-  font-size:20px;
 }
 
 div.profile-view.card{

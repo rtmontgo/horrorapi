@@ -88,7 +88,7 @@ export class MainView extends React.Component {
     if (!movies) return <div className="main-view" />;
     return (
       <Router basename="/client">
-        <div className="header"><h1>Home of Horror</h1>
+        <div className="header"><h1>Home for Horror</h1>
           <div className="navigation">
 
             <Link to={`/users/${localStorage.getItem('user')}`}>
