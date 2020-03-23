@@ -1,34 +1,23 @@
-html {
-  background-color: bisque;
+$primary-color: #3a1717;
+$secondary-color: #4d402c;
+$tertiary-color: #201b12;
+$font-stack: 'Merriweather', sans-serif;
+
+.main-view {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 h1 {
   text-align: center;
-  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;;
-}
-
-.navigation {
-  line-break: auto;
-}
-
-.row {
-  position: relative;
-  top: 30px;
-
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-size: 60px;
 }
 
 p {
   color: black;
 }
 
-.main-view {
-  margin-left: auto;
-  margin-right: auto;
-  width: 80%;
-  margin-bottom:0;
-  
-  
-}
 
 .card {
   margin-top: 10px;
@@ -39,9 +28,9 @@ p {
 }
 
 
-
-
-
+.card:hover {
+  cursor: pointer;
+}
 
 .foot {
   background-color:  rgba(189,192,193,1);
@@ -49,7 +38,7 @@ p {
  
 }
 
-.nav{
+.navigation{
   display: flex;
   justify-content: flex-end;
 }
@@ -61,40 +50,14 @@ p {
 /* header */
 
 .header {
-  background-color: #aa80ff;
+  background-color: #dfc8cb;
   -webkit-box-shadow: 1px 1px 4px 0 rgba(0,0,0,.1);
           box-shadow: 1px 1px 4px 0 rgba(0,0,0,.1);
-  border-bottom: 2px solid#ddccff;
+  border-bottom: 2px solid#090413;
   position: fixed;
   z-index: 500;
   width: 100%;
   height: 60px;
-  
-}
-
-.header ul {
-  margin: 0;
-  padding: 0;
-  margin-right: 10px;
-  list-style: none;
-  overflow: hidden;
-  background-color: #aa80ff;
-}
-
-li {
-    
-    margin-top: 15px;
-    margin-left: 10px;
-    margin-right: 0px;
-}
-
-.header .logo {
-  display: block;
-  float: left;
-  font-size: 40px;
-  padding: 1px 20px;
-  text-decoration: none;
-  font-family: 'Marcellus', serif;
   
 }
 
