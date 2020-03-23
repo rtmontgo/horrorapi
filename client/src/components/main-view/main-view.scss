@@ -3,12 +3,6 @@ $secondary-color: #4d402c;
 $tertiary-color: #201b12;
 $font-stack: 'Merriweather', sans-serif;
 
-h1 {
-  text-align: center;
-  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-  font-size: 60px;
-}
-
 p {
   color: black;
 }
@@ -33,22 +27,22 @@ p {
 
 /* header */
 
-.header {
+.navigation {
   background-color: #dfc8cb;
   -webkit-box-shadow: 1px 1px 4px 0 rgba(0,0,0,.1);
           box-shadow: 1px 1px 4px 0 rgba(0,0,0,.1);
   border-bottom: 2px solid#090413;
-  position: fixed;
-  z-index: 500;
   width: 100%;
-  height: 60px;
-  
-}
-
-.navigation{
   display: flex;
   justify-content: flex-end;
 }
+
+h1 {
+  text-align: center;
+  font-size: 60px;
+  padding-bottom: 15px;
+}
+
 /* 48em = 768px */
 
 @media (min-width: 875px) {
