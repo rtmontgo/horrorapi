@@ -88,14 +88,16 @@ export class MainView extends React.Component {
     if (!movies) return <div className="main-view" />;
     return (
       <Router basename="/client">
-        <div className="navigation">
-          <h1>Home of Horror</h1>
-          <Link to={`/users/${localStorage.getItem('user')}`}>
-            <Button className="profile" variant='outline-info'>Profile</Button>
-          </Link>
+        <div className="header"><h1>Home of Horror</h1>
+          <div className="navigation">
 
-          <Button className="logout" variant='outline-info' onClick={() => this.onLogout()} >Log Out</Button>
-        </div >
+            <Link to={`/users/${localStorage.getItem('user')}`}>
+              <Button className="profile" variant='secondary-info'>Profile</Button>
+            </Link>
+
+            <Button className="logout" variant='secondary-info' onClick={() => this.onLogout()} >Log Out</Button>
+          </div >
+        </div>
 
         <div className="main-view">
           <Route exact path="/" render={() => {
