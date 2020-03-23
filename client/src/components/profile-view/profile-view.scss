@@ -17,6 +17,10 @@ div{
   width: auto;
 }
 
+.favorite-movies{
+  display: inline;
+}
+
 div.title{
   text-align: center;
   font-weight: bold;
@@ -28,4 +32,8 @@ div.title{
 
 div.profile-view.card{
   margin:auto;
+}
+
+Form{
+  margin-top: 30px;
 }

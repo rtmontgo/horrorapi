@@ -170,7 +170,7 @@ export class ProfileView extends React.Component {
           </div>
 
           <Link to={'/'}>
-            <Button className="view-btn" variant="outline-dark" type="button">
+            <Button className="view-btn" variant="outline-info" type="button">
               Back
           </Button>
           </Link>
