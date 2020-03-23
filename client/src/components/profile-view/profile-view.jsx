@@ -176,7 +176,7 @@ export class ProfileView extends React.Component {
           </Link>
           <Button
             className="view-btn"
-            variant="outline-dark"
+            variant="danger"
             type="button"
             onClick={event => this.deleteUser(event)}
           >
