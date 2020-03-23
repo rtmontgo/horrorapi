@@ -92,10 +92,10 @@ export class MainView extends React.Component {
           <div className="navigation">
 
             <Link to={`/users/${localStorage.getItem('user')}`}>
-              <Button className="profile" variant='secondary-info'>Profile</Button>
+              <Button className="profile" variant='outline-info'>Profile</Button>
             </Link>
 
-            <Button className="logout" variant='secondary-info' onClick={() => this.onLogout()} >Log Out</Button>
+            <Button className="logout" variant='outline-info' onClick={() => this.onLogout()} >Log Out</Button>
           </div >
         </div>
 

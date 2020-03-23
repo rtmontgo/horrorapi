@@ -7,21 +7,16 @@
   width: 100%;
   display: flex;
 }
-.navigation{
+
+button{
   display: flex;
   justify-content: flex-end;
 }
 
 h1 {
   font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-  justify-content: center;
   font-size: 80px;
-  margin-bottom: 15px;
-  margin-right: 20px;
-}
-
-p {
-  color: black;
+  margin: 20px 60px 20px 10px;
 }
 
 .card {
